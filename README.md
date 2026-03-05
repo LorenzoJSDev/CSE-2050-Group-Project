@@ -130,7 +130,7 @@ Responsibilities:
 Clone the repository:
 
 ```bash
-git clone <repository-url>
+git clone https://github.com/LorenzoJSDev/CSE-2050-Milestone-One
 ```
 
 Navigate to the project directory:
@@ -149,19 +149,13 @@ pip install -r requirements.txt
 
 # Running the Project
 
-Example usage:
+Cd into the repo and in your terminal write the following command.
 
-```python
-from src.data_handler import DataHandler
-
-handler = DataHandler()
-
-handler.load_data("data/sample_data.csv")
-
-students = handler.query_list_of_enrolled_students("CSE2050")
-
-print(students)
+```bash
+  python -m streamlit run ui.py
 ```
+
+This will open a tab in your browser that will allow you to access the UI.
 
 ---
 
@@ -182,19 +176,3 @@ python -m unittest tests/test_student.py
 ```
 
 ---
-
-# Future Improvements
-
-Potential improvements include:
-
-- Persistent database storage
-- Improved error handling
-- Advanced analytics
-- CLI interface
-- Web interface (Streamlit)
-
----
-
-# License
-
-This project was developed for **educational purposes as part of CSE 2050 at the University of Connecticut**.
