@@ -15,7 +15,8 @@ Status: Development (alpha)
 # ===== Imports =====
 
 # Standard library
-import csv
+import io
+
 
 # Third-party
 import streamlit as st
@@ -30,6 +31,8 @@ from data_handler import DataHandler
 def main():
     """
     Docstring for main
+        - Description: This function is used to set up the web app user interface
+        - Author: Lorenzo .S
     """
 
     # ----- Page Setup -----
@@ -58,7 +61,7 @@ def main():
 
         if university_data_file is not None:
             student_df = pd.read_csv(university_data_file)
-            st.success("Student file uploaded successfully.")
+            st.success("University data file uploaded successfully.")
             st.dataframe(student_df)
 
     # ----- Upload File 2 -----
@@ -73,27 +76,30 @@ def main():
 
         if course_catalog_file is not None:
             course_df = pd.read_csv(course_catalog_file)
-            st.success("Course file uploaded successfully.")
+            st.success("Course catalog file uploaded successfully.")
             st.dataframe(course_df)
 
     st.divider()
 
     # !===== Backend File Handling =====! #
 
-    data_handler_object = None  # (added) safe default
-
     if university_data_file and course_catalog_file:
         university_data_file.seek(0)
         course_catalog_file.seek(0)
 
-        data_handler_object = DataHandler(university_data_file, course_catalog_file)
+        # Convert binary uploaded files into text file-like objects
+        university_data_file_text = io.TextIOWrapper(university_data_file, encoding="utf-8")
+        course_catalog_file_text = io.TextIOWrapper(course_catalog_file, encoding="utf-8")
 
+        data_handler_object = DataHandler(university_data_file_text, course_catalog_file_text)
+
+        #Loads data into the university object within data_handler_object
         data_handler_object.load_course_catalog()
-
+        data_handler_object.load_university_data()
 
 
     # ===== Placeholder for future logic =====
-    st.header("Application Output")
+    st.header("Query Data")
 
     # ===== Action Picker + Conditional Inputs =====
 
@@ -101,7 +107,7 @@ def main():
         st.info("Upload BOTH CSV files to enable the application actions.")
         return
 
-    st.subheader("Choose an operation")
+    st.subheader("Choose a query option")
 
     action_options = [
         "Get list of students enrolled in a course",
@@ -120,24 +126,6 @@ def main():
 
     st.divider()
 
-    def _call_data_handler(method_names, *args, **kwargs):
-        """
-        Try multiple possible DataHandler method names without crashing the UI.
-        Returns (success: bool, value_or_error: any)
-        """
-        for name in method_names:
-            if hasattr(data_handler_object, name):
-                try:
-                    return True, getattr(data_handler_object, name)(*args, **kwargs)
-                except Exception as e:
-                    return False, f"Method '{name}' ran but raised an error: {e}"
-        return False, (
-            "I couldn't find a matching DataHandler method.\n\n"
-            f"Expected one of these names: {method_names}\n"
-            "Either rename your DataHandler function to match one of these, "
-            "or tell me your real method name and I’ll wire it in."
-        )
-
     # ---- 1) Students in a course ----
     if selected_action == "Get list of students enrolled in a course":
         with st.form("form_students_in_course"):
@@ -145,10 +133,7 @@ def main():
             submitted = st.form_submit_button("Get Students")
 
         if submitted:
-            ok, result = _call_data_handler(
-                ["get_students_in_course", "students_in_course", "get_course_students"],
-                course_id
-            )
+            ok, result = True, data_handler_object.query_list_of_enrolled_students(course_id)
 
             if ok:
                 st.success("Students retrieved.")
@@ -159,20 +144,18 @@ def main():
                     st.write(list(result))
                 else:
                     st.write(result)
+                    st.write(result)
             else:
                 st.error(result)
 
     # ---- 2) GPA of a student ----
     elif selected_action == "Print GPA of a student":
         with st.form("form_student_gpa"):
-            student_id = st.text_input("Enter Student ID", key="student_id_gpa")
+            student_id = st.text_input("Enter Student ID", key="student_id")
             submitted = st.form_submit_button("Get GPA")
 
         if submitted:
-            ok, result = _call_data_handler(
-                ["get_student_gpa", "student_gpa", "calculate_student_gpa"],
-                student_id
-            )
+            ok, result = True, data_handler_object.query_student_gpa(student_id)
 
             if ok:
                 st.success("GPA calculated.")
@@ -187,10 +170,7 @@ def main():
             submitted = st.form_submit_button("Get Student Courses")
 
         if submitted:
-            ok, result = _call_data_handler(
-                ["get_student_courses", "student_courses", "get_courses_for_student"],
-                student_id
-            )
+            ok, result = True, data_handler_object.query_student_courses_and_course_info(student_id)
 
             if ok:
                 st.success("Courses retrieved.")
@@ -212,10 +192,7 @@ def main():
             submitted = st.form_submit_button("Calculate Stats")
 
         if submitted:
-            ok, result = _call_data_handler(
-                ["get_course_statistics", "course_statistics", "calculate_course_statistics"],
-                course_id
-            )
+            ok, result = True, data_handler_object.query_mean_median_mode_for_course(course_id)
 
             if ok:
                 st.success("Course statistics computed.")
@@ -233,9 +210,7 @@ def main():
             submitted = st.form_submit_button("Calculate University GPA Stats")
 
         if submitted:
-            ok, result = _call_data_handler(
-                ["get_university_gpa_statistics", "university_gpa_statistics", "calculate_university_gpa_statistics"]
-            )
+            ok, result = True, data_handler_object.query_university_gpa_mean_and_median()
 
             if ok:
                 st.success("University GPA statistics computed.")
@@ -254,10 +229,7 @@ def main():
             submitted = st.form_submit_button("Find Common Students")
 
         if submitted:
-            ok, result = _call_data_handler(
-                ["get_common_students", "common_students", "course_intersection"],
-                course_id_1, course_id_2
-            )
+            ok, result = True, data_handler_object.query_common_students_in_two_courses(course_id_1, course_id_2)
 
             if ok:
                 st.success("Intersection computed.")

@@ -138,9 +138,10 @@ class TestUniversity(unittest.TestCase):
         Docstring for TestUniversity.test_students_in_class()
             - Description: Tests if we get an empty list from requesting students in the class
             - Author: Jerod Abraham
+            - Contributor(s): Lorenzo .S
         """
         self.university1.add_course("CSE2050", 3)
-        self.assertEqual(self.university1.students_in_class("CSE2050"), [])
+        self.assertEqual(self.university1.get_students_in_course("CSE2050"), [])
         
 
 if __name__ == "__main__":

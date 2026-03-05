@@ -100,7 +100,7 @@ class University:
             return course.get_student_count()
         return 0
 
-    def students_in_class(self, course_code):
+    def get_students_in_course(self, course_code):
         """
         Docstring for University.students_in_class()
             - Description: Returns the list of students in a specific course
