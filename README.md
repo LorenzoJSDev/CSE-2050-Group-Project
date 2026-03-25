@@ -1,4 +1,4 @@
-# CSE 2050 – Milestone One  
+# CSE 2050 – Group Project 
 ### University Course Management System
 
 **Author(s):** Lorenzo Julian Serrano and Jerod Abraham
