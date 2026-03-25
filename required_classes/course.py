@@ -34,7 +34,7 @@ class Course:
         - Contributor(s): Lorenzo .S
     """
     
-    def __init__(self, course_code: str, course_credits: int, students: list = None) -> None:
+    def __init__(self, course_code: str, course_credits: int, students: list = None, capacity: int = None) -> None:
         """
         Docstring for __init__
             - Description: Initializes a Course object with a course code, number of credits, and an optional list of enrolled students after validating the input values.
@@ -52,6 +52,7 @@ class Course:
         self.course_code = course_code.strip()
         self.course_credits = course_credits
         self.students = [] if students is None else students
+        self.capacity = None if capacity is None else capacity
 
 
 
