@@ -29,7 +29,7 @@ Status: Development (alpha)
 class Course:
     """
     Docstring for Course class
-        - Description: The course class for the milestone One project
+        - Description: The course class for the milestone Two project
         - Author: Jerod Abraham
         - Contributor(s): Lorenzo .S
     """
@@ -53,7 +53,7 @@ class Course:
         self.course_credits = course_credits
         self.students = [] if students is None else students
         self.capacity = None if capacity is None else capacity
-        
+
 
 
 

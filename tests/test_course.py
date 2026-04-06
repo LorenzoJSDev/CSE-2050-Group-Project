@@ -18,8 +18,8 @@ Status: Development
 import unittest
 
 # Local application (your project modules)
-from required_classes.course import Course
 from required_classes.student import Student
+from required_classes.course import Course
 
 
 # ==== Classes ==== #
