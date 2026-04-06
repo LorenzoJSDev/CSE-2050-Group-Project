@@ -7,7 +7,6 @@ enrollment_record.py
 Description: Contains the EnrollmentRecord class for Milestone 2
 
 Author: Lorenzo .S
-Contributors: Jerod Abraham
 Date Created: 04-06-2026
 Status: Development (alpha)
 
@@ -16,7 +15,7 @@ Status: Development (alpha)
 # ===== Imports =====
 
 # Standard library
-
+import datetime
 
 # Third-party
 
@@ -25,8 +24,26 @@ Status: Development (alpha)
 from required_classes.student import Student
 
 class EnrollmentRecord:
-    def __init__(self, student: Student):
-        self.student = student
-        self.enroll_date = None
+    """
+    Docstring for EnrollmentRecord class
+        - Description: The EnrollmentRecord class for the Milestone Two project
+        - Author: Lorenzo .S
+    """
 
-    pass
+    def __init__(self, student: Student) -> None:
+        """
+        Docstring for EnrollmentRecord.__init__()
+         - Description: This constructor creates the EnrollmentRecord class instance
+         - Author: Lorenzo .S
+        """
+        self.student = student
+        self.enroll_date = datetime.date.today()
+        return
+
+    def __repr__(self):
+        """
+        Docstring for EnrollmentRecord.__repr__()
+            - Description: This method creates a string representation of the EnrollmentRecord
+            - Author: Lorenzo .S
+        """
+        return f"{self.student}, {self.enroll_date}"
