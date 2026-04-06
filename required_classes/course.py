@@ -53,6 +53,7 @@ class Course:
         self.course_credits = course_credits
         self.students = [] if students is None else students
         self.capacity = None if capacity is None else capacity
+        
 
 
 
