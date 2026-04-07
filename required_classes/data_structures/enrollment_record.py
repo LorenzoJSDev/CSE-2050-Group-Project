@@ -21,7 +21,7 @@ import datetime
 
 
 # Local application (your project modules)
-from required_classes.student import Student
+
 
 class EnrollmentRecord:
     """
@@ -30,7 +30,7 @@ class EnrollmentRecord:
         - Author: Lorenzo .S
     """
 
-    def __init__(self, student: Student) -> None:
+    def __init__(self, student: object) -> None:
         """
         Docstring for EnrollmentRecord.__init__()
          - Description: This constructor creates the EnrollmentRecord class instance

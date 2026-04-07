@@ -27,7 +27,7 @@ TO DO:
 
 
 # Local application (your project modules)
-from required_classes.course import Course
+
 
 # ===== Classes =====
 class Student:
@@ -63,7 +63,7 @@ class Student:
         """
         return f"{self.student_id},{self.name}.{self.courses}"
 
-    def enroll(self, course: Course, grade: str):
+    def enroll(self, course: object, grade: str):
         """
         Docstring for Student.enroll() method
             - Description: Adds a course_object:"grade" key value pair to self.courses dictionary if the key does not exist in self.courses
@@ -81,7 +81,7 @@ class Student:
 
         return
 
-    def update_grade(self, course: Course, grade: str):
+    def update_grade(self, course: object, grade: str):
         """
         Docstring for Student.update_grade() method
             - Description: Updates a selected course_object:"grade" key value pair in the self.courses dictionary if the key exists in self.courses

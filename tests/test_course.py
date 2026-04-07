@@ -7,7 +7,7 @@ test_course.py
 Description: Contains the tests cases for the Course class.
 
 Author: Lorenzo .S
-Contributors:
+Contributors: Jerod Abraham
 Date Created: 03-03-2026
 Status: Development
 """
@@ -20,6 +20,7 @@ import unittest
 # Local application (your project modules)
 from required_classes.student import Student
 from required_classes.course import Course
+from required_classes.data_structures.enrollment_record import EnrollmentRecord
 
 
 # ==== Classes ==== #
@@ -31,12 +32,14 @@ class TestCourse(unittest.TestCase):
         Docstring for TestCourse.setUp()
             - Description: Runs before every tests, so every tests has access to created objects.
             - Author: Lorenzo .S
+            - Contributor: Jerod Abraham
         """
 
-        self.course1 = Course("CSE2050",3,[])
-        self.student1 = Student("STU100", "Student1", {self.course1: "A"})
-        self.student2 = Student("STU200", "Student2", {self.course1: "C"})
-        self.course2 = Course("MATH1010", 3, [self.student1, self.student2])
+        self.course1 = Course("CSE2050", 3, 2)
+        self.student1 = Student("STU10001", "Student1")
+        self.student2 = Student("STU10002", "Student2")
+        self.student3 = Student("STU10003", "Student3")
+
 
 
     def test_init(self):
@@ -44,56 +47,99 @@ class TestCourse(unittest.TestCase):
         Docstring for TestCourse.test_init()
             - Description: Tests that the course object is initialized properly.
             - Author: Lorenzo .S
+            - Contributor: Jerod Abraham
         """
 
-        #Course1 Init
         self.assertEqual(self.course1.course_code, "CSE2050")
         self.assertEqual(self.course1.course_credits, 3)
-        self.assertEqual(self.course1.students, [])
+        self.assertEqual(self.course1.capacity, 2)
+        self.assertEqual(self.course1.enrolled, [])
+        self.assertTrue(self.course1.waitlist.is_empty())
 
-        #Course2 Init
-        self.assertEqual(self.course2.course_code, "MATH1010")
-        self.assertEqual(self.course2.course_credits, 3)
-        self.assertEqual(self.course2.students, [self.student1,self.student2])
+    def test_request_enroll_with_space(self):
+        """
+        Docstring for TestCourse.test_request_enroll_with_space()
+            - Description: Tests that a student is enrolled directly when space is available.
+            - Author: Jerod Abraham
+        """
+        self.course1.request_enroll(self.student1, "2026-03-25")
 
-    def test_add_student(self):
-        """
-        Docstring for TestCourse.test_add_student()
-            - Description: Tests that the add_student method adds a student to the course
-            - Author: Lorenzo .S
-        """
-        #Course1
-        self.assertEqual(self.course1.students, [])
-        self.course1.add_student(self.student1)
-        self.assertEqual(self.course1.students[0], self.student1)
-        self.course1.add_student(self.student2)
-        self.assertEqual(self.course1.students, [self.student1, self.student2])
-        self.assertEqual(self.course1.students[1], self.student2)
+        self.assertEqual(len(self.course1.enrolled), 1)
+        self.assertIsInstance(self.course1.enrolled[0], EnrollmentRecord)
+        self.assertEqual(self.course1.enrolled[0].student, self.student1)
+        self.assertEqual(self.course1.enrolled[0].enroll_date, "2026-03-25")
 
-    def test_add_student_existing_student(self):
+    def test_request_enroll_when_full_adds_to_waitlist(self):
         """
-        Docstring for TestCourse.test_add_student_existing_student()
-            - Description: Tests that the Course.add_student() raises an exception when trying to add an existing student.
-            - Author: Lorenzo .S
+        Docstring for TestCourse.test_request_enroll_when_full_adds_to_waitlist()
+            - Description: Tests that extra students are added to the waitlist when the course is full.
+            - Author: Jerod Abraham
         """
+        self.course1.request_enroll(self.student1, "2026-03-25")
+        self.course1.request_enroll(self.student2, "2026-03-25")
+        self.course1.request_enroll(self.student3, "2026-03-25")
 
-        self.assertRaises(ValueError, self.course2.add_student, self.student1)
+        self.assertEqual(len(self.course1.enrolled), 2)
+        self.assertEqual(len(self.course1.waitlist), 1)
 
     def test_get_student_count(self):
         """
         Docstring for TestCourse.get_student_count()
-            - Description: Tests that the get_student_count method returns the correct number of students
+            - Description: Tests that the get_student_count method returns the correct number of enrolled students
             - Author: Lorenzo .S
+            - Contributor: Jerod Abraham
         """
-        #Course1
         self.assertEqual(self.course1.get_student_count(), 0)
-        self.course1.add_student(self.student1)
+
+        self.course1.request_enroll(self.student1, "2026-03-25")
         self.assertEqual(self.course1.get_student_count(), 1)
 
-        #Course2
-        self.assertEqual(self.course2.get_student_count(), 2)
+        self.course1.request_enroll(self.student2, "2026-03-25")
+        self.assertEqual(self.course1.get_student_count(), 2)
 
+    def test_drop_removes_student(self):
+        """
+        Docstring for TestCourse.drop()
+            - Description: Tests that dropping a student removes them from the enrolled roster.
+            - Author: Jerod Abraham
+        """
+        self.course1.request_enroll(self.student1, "2026-03-25")
+        self.course1.request_enroll(self.student2, "2026-03-25")
 
+        self.course1.drop("STU10001", "2026-03-26")
+
+        self.assertEqual(len(self.course1.enrolled), 1)
+        self.assertEqual(self.course1.enrolled[0].student.student_id, "STU10002")
+
+    def test_drop_promotes_waitlisted_student(self):
+        """
+        Docstring for TestCourse.drop()
+            - Description: Tests that dropping a student promotes the next waitlisted student.
+            - Author: Jerod Abraham
+        """
+        self.course1.request_enroll(self.student1, "2026-03-25")
+        self.course1.request_enroll(self.student2, "2026-03-25")
+        self.course1.request_enroll(self.student3, "2026-03-25")  # goes to waitlist
+
+        self.course1.drop("STU10001", "2026-03-26")
+
+        self.assertEqual(len(self.course1.enrolled), 2)
+        self.assertEqual(len(self.course1.waitlist), 0)
+
+        enrolled_ids = [record.student.student_id for record in self.course1.enrolled]
+        self.assertIn("STU10002", enrolled_ids)
+        self.assertIn("STU10003", enrolled_ids)
+
+    def test_request_enroll_duplicate_student_raises(self):
+        """
+        Docstring for TestCourse.request_enroll()
+            - Description: Tests that enrolling the same student twice raises an error.
+            - Author: Jerod Abraham
+        """
+        self.course1.request_enroll(self.student1, "2026-03-25")
+
+        with self.assertRaises(ValueError):
+            self.course1.request_enroll(self.student1, "2026-03-26")
 
 if __name__ == "__main__":
     unittest.main()
