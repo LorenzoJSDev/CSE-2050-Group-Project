@@ -30,14 +30,14 @@ class EnrollmentRecord:
         - Author: Lorenzo .S
     """
 
-    def __init__(self, student: object) -> None:
+    def __init__(self, student: object,enroll_date = datetime.date.today()) -> None:
         """
         Docstring for EnrollmentRecord.__init__()
          - Description: This constructor creates the EnrollmentRecord class instance
          - Author: Lorenzo .S
         """
         self.student = student
-        self.enroll_date = datetime.date.today()
+        self.enroll_date = enroll_date
         return
 
     def __repr__(self):
