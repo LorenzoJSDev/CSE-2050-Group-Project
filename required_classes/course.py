@@ -42,7 +42,6 @@ class Course:
             - Author: Jerod Abraham
             - Contributor(s): Lorenzo .S
         """
-
         #Exception Handling
         if not isinstance(course_code, str) or not course_code.strip():
             raise ValueError("course_code must be a non-empty string")
@@ -58,6 +57,7 @@ class Course:
         self.capacity = capacity
         self.enrolled = []
         self.waitlist = LinkedQueue()
+        self.enrolled_sorted_by = None
 
     def get_student_count(self) -> int:
         """
@@ -89,18 +89,19 @@ class Course:
         else:
             self.waitlist.enqueue(student)
 
+        self.enrolled_sorted_by = None
+
     def drop(self, student_id, enroll_date_for_replacement=None):
         """
         Docstring for Course.drop()
-            - Description: Drops a student from the enrolled roster.
+            - Description: Drops a student from the roster of enrolled students.
             - Author: Jerod Abraham
         """
-        remove_index = -1
 
-        for i, record in enumerate(self.enrolled):
-            if record.student.student_id == student_id:
-                remove_index = i
-                break
+        if self.enrolled_sorted_by != "id":
+            self.sort_enrolled("id", "insertion")
+
+        remove_index = self.recursive_binary_search(self.enrolled, student_id, 0, len(self.enrolled) - 1)
 
         if remove_index == -1:
             raise ValueError(f"Student {student_id} is not enrolled in {self.course_code}")
@@ -111,6 +112,95 @@ class Course:
             next_student = self.waitlist.dequeue()
             replacement_record = EnrollmentRecord(next_student, enroll_date_for_replacement)
             self.enrolled.append(replacement_record)
+
+        self.enrolled_sorted_by = None
+
+    def _get_sort_key(self, record, by):
+        """
+        Docstring for Course._get_sort_key()
+            - Description: Returns the value used to sort an enrollment record.
+            - Author: Jerod Abraham
+        """
+        if by == "name":
+            return record.student.name
+        elif by == "id":
+            return record.student.student_id
+        elif by == "date":
+            return record.enroll_date
+        else:
+            raise ValueError("Sort key must be 'name', 'id', or 'date'")
+        
+    def _insertion_sort(self, by):
+        """
+        Docstring for Course._insertion_sort()
+            - Description: Sorts the enrolled roster using insertion sort.
+            - Author: Jerod Abraham
+        """
+
+        for i in range(1, len(self.enrolled)):
+            current_record = self.enrolled[i]
+            current_key = self._get_sort_key(current_record, by)
+
+            j = i - 1
+            while j >= 0 and self._get_sort_key(self.enrolled[j], by) > current_key:
+                self.enrolled[j + 1] = self.enrolled[j]
+                j -= 1
+
+            self.enrolled[j + 1] = current_record
+
+    def _selection_sort(self, by):
+        """
+        Docstring for Course._selection_sort()
+            - Description: Sorts the enrolled roster using selection sort.
+            - Author: Jerod Abraham
+        """
+
+        n = len(self.enrolled)
+
+        for i in range(n):
+            min_index = i
+
+            for j in range(i + 1, n):
+                if self._get_sort_key(self.enrolled[j], by) < self._get_sort_key(self.enrolled[min_index], by):
+                    min_index = j
+
+            self.enrolled[i], self.enrolled[min_index] = self.enrolled[min_index], self.enrolled[i]
+
+    def sort_enrolled(self, by, algorithm):
+        """
+        Docstring for Course.sort_enrolled()
+            - Description: Sorts the enrolled roster by a specified field using a given sorting algorithm.
+            - Author: Jerod Abraham
+        """
+
+        if algorithm == "insertion":
+            self._insertion_sort(by)
+        elif algorithm == "selection":
+            self._selection_sort(by)
+        else:
+            raise ValueError("Algorithm must be 'insertion' or 'selection'")
+
+        self.enrolled_sorted_by = by
+
+    def recursive_binary_search(self, records, target_id, low, high):
+        """
+        Docstring for Course.recursive_binary_search()
+            - Description: Recursively searches for a student ID in a roster of enrollment records sorted by student ID.
+            - Author: Jerod Abraham
+        """
+
+        if low > high:
+            return -1
+
+        mid = (low + high) // 2
+        mid_id = records[mid].student.student_id
+
+        if mid_id == target_id:
+            return mid
+        elif target_id < mid_id:
+            return self.recursive_binary_search(records, target_id, low, mid - 1)
+        else:
+            return self.recursive_binary_search(records, target_id, mid + 1, high)
 
     def __str__(self) -> str:
         """

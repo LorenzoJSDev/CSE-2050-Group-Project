@@ -141,5 +141,145 @@ class TestCourse(unittest.TestCase):
         with self.assertRaises(ValueError):
             self.course1.request_enroll(self.student1, "2026-03-26")
 
+    def test_sort_enrolled_by_id_insertion(self):
+        """
+        Docstring for TestCourse.test_sort_enrolled_by_id_insertion()
+            - Description: Tests that the enrolled roster is sorted by student ID using insertion sort.
+            - Author: Jerod Abraham
+        """
+
+        self.course1 = Course("CSE2050", 3, 3)
+        self.course1.request_enroll(self.student3, "2026-03-27")
+        self.course1.request_enroll(self.student1, "2026-03-25")
+        self.course1.request_enroll(self.student2, "2026-03-26")
+
+        self.course1.sort_enrolled("id", "insertion")
+
+        sorted_ids = [record.student.student_id for record in self.course1.enrolled]
+        self.assertEqual(sorted_ids, ["STU10001", "STU10002", "STU10003"])
+        self.assertEqual(self.course1.enrolled_sorted_by, "id")
+
+
+    def test_sort_enrolled_by_name_selection(self):
+        """
+        Docstring for TestCourse.test_sort_enrolled_by_name_selection()
+            - Description: Tests that the enrolled roster is sorted by student name using selection sort.
+            - Author: Jerod Abraham
+        """
+
+        self.course1 = Course("CSE2050", 3, 3)
+        self.course1.request_enroll(self.student3, "2026-03-27")
+        self.course1.request_enroll(self.student1, "2026-03-25")
+        self.course1.request_enroll(self.student2, "2026-03-26")
+
+        self.course1.sort_enrolled("name", "selection")
+
+        sorted_names = [record.student.name for record in self.course1.enrolled]
+        self.assertEqual(sorted_names, ["Student1", "Student2", "Student3"])
+        self.assertEqual(self.course1.enrolled_sorted_by, "name")
+
+
+    def test_sort_enrolled_by_date_insertion(self):
+        """
+        Docstring for TestCourse.test_sort_enrolled_by_date_insertion()
+            - Description: Tests that the enrolled roster is sorted by enrollment date using insertion sort.
+            - Author: Jerod Abraham
+        """
+
+        self.course1 = Course("CSE2050", 3, 3)
+        self.course1.request_enroll(self.student3, "2026-03-27")
+        self.course1.request_enroll(self.student1, "2026-03-25")
+        self.course1.request_enroll(self.student2, "2026-03-26")
+
+        self.course1.sort_enrolled("date", "insertion")
+
+        sorted_dates = [record.enroll_date for record in self.course1.enrolled]
+        self.assertEqual(sorted_dates, ["2026-03-25", "2026-03-26", "2026-03-27"])
+        self.assertEqual(self.course1.enrolled_sorted_by, "date")
+
+    def test_recursive_binary_search_finds_students(self):
+        """
+        Docstring for TestCourse.test_recursive_binary_search_finds_students()
+            - Description: Tests that recursive binary search finds the first, middle, and last student in a sorted enrolled roster.
+            - Author: Jerod Abraham
+        """
+
+        self.course1 = Course("CSE2050", 3, 3)
+        self.course1.request_enroll(self.student1, "2026-03-25")
+        self.course1.request_enroll(self.student2, "2026-03-26")
+        self.course1.request_enroll(self.student3, "2026-03-27")
+
+        self.course1.sort_enrolled("id", "insertion")
+
+        index1 = self.course1.recursive_binary_search(self.course1.enrolled, "STU10001", 0, len(self.course1.enrolled) - 1)
+        index2 = self.course1.recursive_binary_search(self.course1.enrolled, "STU10002", 0, len(self.course1.enrolled) - 1)
+        index3 = self.course1.recursive_binary_search(self.course1.enrolled, "STU10003", 0, len(self.course1.enrolled) - 1)
+
+        self.assertEqual(self.course1.enrolled[index1].student.student_id, "STU10001")
+        self.assertEqual(self.course1.enrolled[index2].student.student_id, "STU10002")
+        self.assertEqual(self.course1.enrolled[index3].student.student_id, "STU10003")
+
+    def test_recursive_binary_search_not_found(self):
+        """
+        Docstring for TestCourse.test_recursive_binary_search_not_found()
+            - Description: Tests that recursive binary search returns -1 when the student ID is not found.
+            - Author: Jerod Abraham
+        """
+
+        self.course1 = Course("CSE2050", 3, 3)
+        self.course1.request_enroll(self.student1, "2026-03-25")
+        self.course1.request_enroll(self.student2, "2026-03-26")
+        self.course1.request_enroll(self.student3, "2026-03-27")
+
+        self.course1.sort_enrolled("id", "insertion")
+
+        result = self.course1.recursive_binary_search(self.course1.enrolled, "STU99999", 0, len(self.course1.enrolled) - 1)
+
+        self.assertEqual(result, -1)
+
+    def test_drop_uses_binary_search(self):
+        """
+        Docstring for TestCourse.test_drop_uses_binary_search()
+            - Description: Tests that dropping a student removes the correct record after sorting by student ID.
+            - Author: Jerod Abraham
+        """
+
+        self.course1 = Course("CSE2050", 3, 3)
+        self.course1.request_enroll(self.student3, "2026-03-27")
+        self.course1.request_enroll(self.student1, "2026-03-25")
+        self.course1.request_enroll(self.student2, "2026-03-26")
+
+        self.course1.drop("STU10002", "2026-03-28")
+
+        enrolled_ids = [record.student.student_id for record in self.course1.enrolled]
+
+        self.assertNotIn("STU10002", enrolled_ids)
+        self.assertEqual(len(self.course1.enrolled), 2)
+
+    def test_drop_binary_search_promotes_waitlisted_student(self):
+        """
+        Docstring for TestCourse.test_drop_binary_search_promotes_waitlisted_student()
+            - Description: Tests that dropping a student with binary search promotes the next waitlisted student.
+            - Author: Jerod Abraham
+        """
+
+        self.course1 = Course("CSE2050", 3, 3)
+        student4 = Student("STU10004", "Student4")
+
+        self.course1.request_enroll(self.student3, "2026-03-27")
+        self.course1.request_enroll(self.student1, "2026-03-25")
+        self.course1.request_enroll(self.student2, "2026-03-26")
+        self.course1.request_enroll(student4, "2026-03-28")
+
+        self.assertEqual(len(self.course1.waitlist), 1)
+
+        self.course1.drop("STU10002", "2026-03-29")
+
+        enrolled_ids = [record.student.student_id for record in self.course1.enrolled]
+
+        self.assertNotIn("STU10002", enrolled_ids)
+        self.assertIn("STU10004", enrolled_ids)
+        self.assertEqual(len(self.course1.waitlist), 0)
+
 if __name__ == "__main__":
     unittest.main()
