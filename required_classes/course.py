@@ -148,12 +148,16 @@ class Course:
             return self.recursive_binary_search(records, target_id, low, mid - 1)
         return self.recursive_binary_search(records, target_id, mid + 1, high)
 
-    def request_enroll(self, student, enroll_date):
+    def request_enroll(self, student, enroll_date=None):
         """
         Docstring for Course.request_enroll()
             - Description: Requests enrollment for a student.
             - Author: Jerod Abraham
+            - Contributor(s): Lorenzo .S
         """
+        if enroll_date is None:
+            enroll_date = datetime.date.today()
+
         for record in self.enrolled:
             if record.student.student_id == student.student_id:
                 raise ValueError(f"Student {student.student_id} is already enrolled in {self.course_code}")

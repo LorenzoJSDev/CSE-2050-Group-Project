@@ -55,7 +55,7 @@ class University:
             course = Course(course_code, course_credits, capacity)
             self.courses[course_code] = course
         return self.courses[course_code]
-    
+
     def add_student(self, student_id, name):
         """
         Docstring for University.add_student()
@@ -92,13 +92,19 @@ class University:
             - Description: Returns the course object from the self.courses dictionary.
             - Author: Lorenzo .S
         """
-        return self.courses.get(course_code)
+        if course_code in self.courses.keys():
+            return self.courses[course_code]
+        else:
+            raise ValueError(f"Course_Code {course_code} does not exist in University object")
 
     def get_course_enrollment(self, course_code):
+        """
+        Docstring for University.get_course_enrollment()
+            - Description: Returns the current number of enrolled students in a course.
+            - Author: Lorenzo .S
+        """
         course = self.get_course(course_code)
-        if course:
-            return course.get_student_count()
-        return 0
+        return course.get_student_count()
 
     def get_students_in_course(self, course_code):
         """
@@ -108,6 +114,23 @@ class University:
             - Contributor(s): Lorenzo .S
         """
         course = self.get_course(course_code)
-        if course:
-            return course.students
-        return []
+        return [record.student for record in course.enrolled]
+
+    def request_enroll(self, student_id, course_code, enroll_date):
+        """
+        Docstring for University.request_enroll()
+            - Description: Requests enrollment for a student in a course.
+            - Author: Lorenzo .S
+        """
+        student = self.get_student(student_id)
+        course = self.get_course(course_code)
+        course.request_enroll(student, enroll_date)
+
+    def drop_student(self, student_id, course_code, enroll_date_for_replacement=None):
+        """
+        Docstring for University.drop_student()
+            - Description: Drops a student from a course.
+            - Author: Lorenzo .S
+        """
+        course = self.get_course(course_code)
+        course.drop(student_id, enroll_date_for_replacement)
