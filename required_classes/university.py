@@ -44,15 +44,15 @@ class University:
         """
         self.students = {}
         self.courses = {}
-    
-    def add_course(self, course_code, course_credits):
+
+    def add_course(self, course_code, course_credits, capacity):
         """
         Docstring for University.add_course() method
             - Description: Adds a course to the university
             - Author: Jerod Abraham
         """
         if course_code not in self.courses:
-            course = Course(course_code, course_credits)
+            course = Course(course_code, course_credits, capacity)
             self.courses[course_code] = course
         return self.courses[course_code]
     

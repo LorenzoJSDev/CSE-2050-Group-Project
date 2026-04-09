@@ -16,7 +16,6 @@ Status: Development
 
 # Standard library
 import unittest
-import io
 
 # Local application (your project modules)
 from data_handler import DataHandler
@@ -39,9 +38,10 @@ class TestDataHandler(unittest.TestCase):
             - Description: Sets up the objects for testing.
             - Author: Lorenzo .S
         """
-        self.university_data_file = open("csv_files/university_data(in).csv",mode='r',newline='', encoding="utf-8")
-        self.course_catalog_file = open("csv_files/course_catalog(in).csv",mode='r',newline='', encoding="utf-8")
-        self.data_handler1 = DataHandler(self.university_data_file, self.course_catalog_file)
+        self.university_data_file = open("csv_files/milestone_2_university_data(in).csv", mode='r', newline='', encoding="utf-8")
+        self.course_catalog_file = open("csv_files/milestone_2_course_catalog_CSE10_with_capacity(in).csv", mode='r', newline='', encoding="utf-8")
+        self.enrollment_file = open("csv_files/milestone_2_enrollments_CSE10(in).csv", mode='r', newline='', encoding="utf-8")
+        self.data_handler1 = DataHandler(self.university_data_file, self.course_catalog_file, self.enrollment_file)
         return
 
     def tearDown(self):
@@ -53,7 +53,7 @@ class TestDataHandler(unittest.TestCase):
         """
         self.university_data_file.close()
         self.course_catalog_file.close()
-
+        self.enrollment_file.close()
 
     # ---- Test DataHandler.__init__() ---- #
 
@@ -66,6 +66,7 @@ class TestDataHandler(unittest.TestCase):
 
         self.assertEqual(self.data_handler1.university_data_file, self.university_data_file)
         self.assertEqual(self.data_handler1.course_catalog_file, self.course_catalog_file)
+        self.assertEqual(self.data_handler1.enrollment_file, self.enrollment_file)
         self.assertIsInstance(self.data_handler1.university_obj, University)
         self.assertEqual(self.data_handler1.university_obj.courses, {})
         self.assertEqual(self.data_handler1.university_obj.students, {})
@@ -81,7 +82,16 @@ class TestDataHandler(unittest.TestCase):
 
         self.assertEqual(self.data_handler1.course_catalog_file, self.course_catalog_file)
         self.data_handler1.load_course_catalog()
-        self.assertEqual(list(self.data_handler1.university_obj.courses.keys()), ['CSE1010', 'CSE2050', 'CSE3100', 'MATH1010', 'MATH2010', 'PHYS1010', 'PHYS2010', 'BIO1010', 'CHEM1010', 'ENG1010', 'ECON1010', 'PSYCH1010', 'BUS1010'])
+
+        expected_courses = [
+            'CSE1010', 'CSE2050', 'CSE2102', 'CSE2500', 'CSE2600',
+            'CSE3100', 'CSE3140', 'CSE3150', 'CSE3500', 'CSE3666'
+        ]
+
+        self.assertEqual(list(self.data_handler1.university_obj.courses.keys()), expected_courses)
+
+        for course_code in expected_courses:
+            self.assertIsInstance(self.data_handler1.university_obj.get_course(course_code), Course)
 
     # ---- Test DataHandler.load_university_data() ---- #
 
@@ -95,7 +105,7 @@ class TestDataHandler(unittest.TestCase):
         self.assertEqual(self.data_handler1.university_data_file, self.university_data_file)
         self.data_handler1.load_university_data()
         self.assertEqual(list(self.data_handler1.university_obj.students.keys())[2], 'STU00003')
-
+        self.assertIsInstance(self.data_handler1.university_obj.get_student('STU00001'), Student)
 
 
 if __name__ == "__main__":

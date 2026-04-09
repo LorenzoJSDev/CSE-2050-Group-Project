@@ -38,7 +38,7 @@ class DataHandler:
         - Author: Lorenzo .S
     """
 
-    def __init__(self, university_data_file, course_catalog_file) -> None:
+    def __init__(self, university_data_file, course_catalog_file, enrollment_file) -> None:
         """
         Docstring for DataHandler.__init__()
             - Description: TBD
@@ -46,45 +46,59 @@ class DataHandler:
         """
         self.university_data_file = university_data_file
         self.course_catalog_file = course_catalog_file
+        self.enrollment_file = enrollment_file
         self.university_obj = University()
 
 
     # ---- Data Loaders ---- #
 
     def load_course_catalog(self) -> None:
-        """
-        Docstring for DataHandler.load_course_catalog()
-            - Description: Loads the data from course_catalog into the university object.
-            - Author: Lorenzo .S
-
-        """
         csv_reader = csv.DictReader(self.course_catalog_file)
+
         for row in csv_reader:
-            self.university_obj.add_course(row['course_code'], int(row['credits']))
+            course_id = row["course_id"].strip()
+            credits = int(row["credits"])
+            capacity = int(row["capacity"])
+
+            self.university_obj.add_course(course_id, credits, capacity)
         return
 
     def load_university_data(self) -> None:
-        """
-        Docstring for DataHandler.load_university_data()
-            - Description: Loads the data from university_data file into the university object.
-            - Author: Lorenzo .S
-        """
-
         csv_reader = csv.DictReader(self.university_data_file)
 
         for row in csv_reader:
+            student_id = row["student_id"].strip()
+            name = row["name"].strip()
 
-            #Add student to university object
-            self.university_obj.add_student(row['student_id'], row['name'])
+            self.university_obj.add_student(student_id, name)
 
-            #Splits courses in courses column into individual key value pairs
-            courses = row['courses'].strip().split(';')
+            courses_field = row.get("courses", "").strip()
 
-            for course in courses:
-                course_code, course_grade = course.split(':')
-                course_obj = self.university_obj.get_course(course_code)
-                self.university_obj.get_student(row['student_id']).enroll(course_obj, course_grade)
+            if not courses_field:
+                continue
+
+            courses = courses_field.split(";")
+
+            for course_entry in courses:
+                course_entry = course_entry.strip()
+
+                if not course_entry or ":" not in course_entry:
+                    continue
+
+                course_id, course_grade = course_entry.split(":", 1)
+                course_id = course_id.strip()
+                course_grade = course_grade.strip()
+
+                if course_id not in self.university_obj.courses:
+                    continue
+
+                course_obj = self.university_obj.get_course(course_id)
+                student_obj = self.university_obj.get_student(student_id)
+                student_obj.enroll(course_obj, course_grade)
         return
+
+    def load_enrollment_data(self) -> None:
+        pass
 
     # ---- Data Query Methods ---- #
 
