@@ -73,7 +73,6 @@ class Student:
         if course not in self.courses.keys():
             if grade in self.GRADE_POINTS:
                 self.courses[course] = grade
-                course.add_student(self)
             else:
                 raise ValueError(f"{grade} is not a valid grade input")
         else:

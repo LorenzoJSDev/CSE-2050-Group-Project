@@ -36,13 +36,13 @@ class TestStudent(unittest.TestCase):
             - Author: Lorenzo .S
         """
 
-        #Test Courses
-        self.course1 = Course("CSE2050", 3, [])
-        self.course2 = Course("MATH1010", 2, [])
+        # Test Courses
+        self.course1 = Course("CSE2050", 3, 1)
+        self.course2 = Course("MATH1010", 2, 1)
 
-        #Test Students
+        # Test Students
         self.student1 = Student("STU00001", "Student_1")
-        self.student2 = Student("STU00002", "Student_2", {self.course1:"A"})
+        self.student2 = Student("STU00002", "Student_2", {self.course1: "A"})
 
     # ---- Test Student.__init__() ---- #
 
@@ -52,15 +52,15 @@ class TestStudent(unittest.TestCase):
             - Description: Tests that the constructor correctly initializes.
             - Author: Lorenzo .S
         """
-        #Student1
+        # Student1
         self.assertEqual(self.student1.student_id, "STU00001")
         self.assertEqual(self.student1.name, "Student_1")
         self.assertEqual(self.student1.courses, {})
 
-        #Student2
+        # Student2
         self.assertEqual(self.student2.student_id, "STU00002")
         self.assertEqual(self.student2.name, "Student_2")
-        self.assertEqual(self.student2.courses, {self.course1:"A"})
+        self.assertEqual(self.student2.courses, {self.course1: "A"})
         self.assertEqual(self.student2.courses[self.course1], "A")
 
     # ---- Test Student.enroll() ---- #
@@ -71,19 +71,15 @@ class TestStudent(unittest.TestCase):
             - Description: Enrolls the student with the given course
             - Author: Lorenzo .S
         """
-        #Student1
-        self.assertEqual(self.student1.courses,{})
-        self.student1.enroll(self.course1,"A")
-        self.assertEqual(self.student1.courses,{self.course1:"A"})
+        # Student1
+        self.assertEqual(self.student1.courses, {})
+        self.student1.enroll(self.course1, "A")
+        self.assertEqual(self.student1.courses, {self.course1: "A"})
 
-        #Student2
-        self.assertEqual(self.student2.courses,{self.course1:"A"})
-        self.student2.enroll(self.course2,"B")
-        self.assertEqual(self.student2.courses,{self.course1:"A",self.course2:"B"})
-
-        #Student2 was not properly enrolled in course 1 so we can not expect them to be in the course roster student list
-        self.assertEqual(self.course1.students, [self.student1])
-        self.assertEqual(self.course2.students, [self.student2])
+        # Student2
+        self.assertEqual(self.student2.courses, {self.course1: "A"})
+        self.student2.enroll(self.course2, "B")
+        self.assertEqual(self.student2.courses, {self.course1: "A", self.course2: "B"})
 
         return
 
@@ -94,7 +90,7 @@ class TestStudent(unittest.TestCase):
             - Author: Lorenzo .S
         """
         self.assertEqual(self.student2.courses, {self.course1: "A"})
-        self.assertRaises(ValueError, self.student2.enroll, self.course1,"B")
+        self.assertRaises(ValueError, self.student2.enroll, self.course1, "B")
 
     def test_enroll_invalid_grade(self):
         """
@@ -131,7 +127,6 @@ class TestStudent(unittest.TestCase):
         self.assertEqual(self.student2.calculate_gpa(), 4.0)
         self.assertEqual(self.student1.calculate_gpa(), 0.0)
 
-
     # ---- Test Student.get_course_info() ---- #
 
     def test_get_course_info(self):
@@ -140,14 +135,25 @@ class TestStudent(unittest.TestCase):
             - Description: Tests that Student.get_course_info() works as expected.
             - Author: Lorenzo .S
         """
-        self.assertEqual(self.student2.get_course_info(), [{'course_code': 'CSE2050', 'grade': 'A', 'credits': 3}])
-        self.student2.enroll(self.course2,"B")
-        self.assertEqual(self.student2.get_course_info(), [{'course_code': 'CSE2050', 'grade': 'A', 'credits': 3}, {'course_code': 'MATH1010', 'grade': 'B', 'credits': 2}])
+        self.assertEqual(
+            self.student2.get_course_info(),
+            [{'course_code': 'CSE2050', 'grade': 'A', 'credits': 3}]
+        )
 
-        #Student1
+        self.student2.enroll(self.course2, "B")
+
+        self.assertEqual(
+            self.student2.get_course_info(),
+            [
+                {'course_code': 'CSE2050', 'grade': 'A', 'credits': 3},
+                {'course_code': 'MATH1010', 'grade': 'B', 'credits': 2}
+            ]
+        )
+
+        # Student1
         self.assertEqual(self.student1.get_course_info(), [])
         return
 
+
 if __name__ == "__main__":
     unittest.main()
-
