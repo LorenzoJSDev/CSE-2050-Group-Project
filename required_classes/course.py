@@ -43,7 +43,12 @@ class Course:
             - Contributor(s): Lorenzo .S
         """
 <<<<<<< HEAD
+<<<<<<< HEAD
         #Exception Handling
+=======
+
+        # Exception Handling
+>>>>>>> cc93ae11f315b055f89bba9918f87929e0695685
 =======
 
         # Exception Handling
@@ -188,10 +193,16 @@ class Course:
             - Author: Jerod Abraham
         """
 <<<<<<< HEAD
+<<<<<<< HEAD
 
         if self.enrolled_sorted_by != "id":
             self.sort_enrolled("id", "insertion")
 
+=======
+        if self.enrolled_sorted_by != "id":
+            self.sort_enrolled("id", "insertion")
+
+>>>>>>> cc93ae11f315b055f89bba9918f87929e0695685
 =======
         if self.enrolled_sorted_by != "id":
             self.sort_enrolled("id", "insertion")
@@ -213,6 +224,7 @@ class Course:
             replacement_record = EnrollmentRecord(next_student, enroll_date_for_replacement)
             self.enrolled.append(replacement_record)
             self.enrolled_sorted_by = None
+<<<<<<< HEAD
 
         self.enrolled_sorted_by = None
 
@@ -302,6 +314,8 @@ class Course:
             return self.recursive_binary_search(records, target_id, low, mid - 1)
         else:
             return self.recursive_binary_search(records, target_id, mid + 1, high)
+=======
+>>>>>>> cc93ae11f315b055f89bba9918f87929e0695685
 
     def __str__(self) -> str:
         """
