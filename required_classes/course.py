@@ -25,6 +25,10 @@ import datetime
 from required_classes.data_structures.linked_queue import LinkedQueue
 from required_classes.data_structures.enrollment_record import EnrollmentRecord
 from required_classes.data_structures.hash_map import HashMap
+<<<<<<< HEAD
+=======
+
+>>>>>>> 810a99955526e9f9e5fd8dcca493647ec882aa34
 
 # ===== Classes =====
 
@@ -36,8 +40,13 @@ class Course:
         - Contributor(s): Lorenzo .S
     """
 
+<<<<<<< HEAD
     def __init__( self, course_code: str, course_credits: int, capacity: int = 30, students: list = None,
     prerequisite: HashMap = None,enrolled: list = None, waitlist: list = None) -> None:
+=======
+    def __init__(self, course_code: str, course_credits: int, capacity: int = 30, students: list = None,
+                 prerequisite: HashMap = None, enrolled: list = None, waitlist: list = None) -> None:
+>>>>>>> 810a99955526e9f9e5fd8dcca493647ec882aa34
         """
         Docstring for __init__
             - Description: Initializes a Course object with a course code, number of credits, and an optional list of enrolled students after validating the input values.
@@ -116,7 +125,11 @@ class Course:
         if by == "date":
             return record.enroll_date
         raise ValueError("Sort key must be 'name', 'id', or 'date'")
+<<<<<<< HEAD
     
+=======
+
+>>>>>>> 810a99955526e9f9e5fd8dcca493647ec882aa34
     def _merge_sort(self, records, by):
         """
         Docstring for Course._merge_sort()
@@ -174,11 +187,19 @@ class Course:
 
     """
     def insertion_sort_enrolled(self, by):
+<<<<<<< HEAD
         
         Docstring for Course.insertion_sort_enrolled()
             - Description: Sorts the enrolled roster using insertion sort.
             - Author: Lorenzo .S
         
+=======
+
+        Docstring for Course.insertion_sort_enrolled()
+            - Description: Sorts the enrolled roster using insertion sort.
+            - Author: Lorenzo .S
+
+>>>>>>> 810a99955526e9f9e5fd8dcca493647ec882aa34
         for i in range(1, len(self.enrolled)):
             current_record = self.enrolled[i]
             j = i - 1
@@ -190,11 +211,19 @@ class Course:
             self.enrolled[j + 1] = current_record
 
     def selection_sort_enrolled(self, by):
+<<<<<<< HEAD
         
         Docstring for Course.selection_sort_enrolled()
             - Description: Sorts the enrolled roster using selection sort.
             - Author: Lorenzo .S
         
+=======
+
+        Docstring for Course.selection_sort_enrolled()
+            - Description: Sorts the enrolled roster using selection sort.
+            - Author: Lorenzo .S
+
+>>>>>>> 810a99955526e9f9e5fd8dcca493647ec882aa34
         n = len(self.enrolled)
 
         for i in range(n):
@@ -207,11 +236,19 @@ class Course:
             self.enrolled[i], self.enrolled[min_index] = self.enrolled[min_index], self.enrolled[i]
 
     def sort_enrolled(self, by, algorithm):
+<<<<<<< HEAD
         
         Docstring for Course.sort_enrolled()
             - Description: Sorts the enrolled roster by the requested key using the requested algorithm.
             - Author: Lorenzo .S
         
+=======
+
+        Docstring for Course.sort_enrolled()
+            - Description: Sorts the enrolled roster by the requested key using the requested algorithm.
+            - Author: Lorenzo .S
+
+>>>>>>> 810a99955526e9f9e5fd8dcca493647ec882aa34
         if algorithm == "insertion":
             self.insertion_sort_enrolled(by)
         elif algorithm == "selection":
@@ -221,6 +258,10 @@ class Course:
 
         self.enrolled_sorted_by = by
     """
+<<<<<<< HEAD
+=======
+
+>>>>>>> 810a99955526e9f9e5fd8dcca493647ec882aa34
     def sort_enrolled(self, by, algorithm):
         """
         Docstring for Course.sort_enrolled()

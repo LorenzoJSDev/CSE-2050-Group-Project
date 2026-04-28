@@ -277,11 +277,19 @@ class TestCourse(unittest.TestCase):
 
     """
     def test_sort_enrolled_by_id_insertion(self):
+<<<<<<< HEAD
         
         Docstring for TestCourse.test_sort_enrolled_by_id_insertion()
             - Description: Tests that the enrolled roster is sorted by student ID using insertion sort.
             - Author: Jerod Abraham
         
+=======
+
+        Docstring for TestCourse.test_sort_enrolled_by_id_insertion()
+            - Description: Tests that the enrolled roster is sorted by student ID using insertion sort.
+            - Author: Jerod Abraham
+
+>>>>>>> 810a99955526e9f9e5fd8dcca493647ec882aa34
 
         self.course1 = Course("CSE2050", 3, 3)
         self.course1.request_enroll(self.student3, "2026-03-27")
@@ -296,11 +304,19 @@ class TestCourse(unittest.TestCase):
 
 
     def test_sort_enrolled_by_name_selection(self):
+<<<<<<< HEAD
         
         Docstring for TestCourse.test_sort_enrolled_by_name_selection()
             - Description: Tests that the enrolled roster is sorted by student name using selection sort.
             - Author: Jerod Abraham
         
+=======
+
+        Docstring for TestCourse.test_sort_enrolled_by_name_selection()
+            - Description: Tests that the enrolled roster is sorted by student name using selection sort.
+            - Author: Jerod Abraham
+
+>>>>>>> 810a99955526e9f9e5fd8dcca493647ec882aa34
 
         self.course1 = Course("CSE2050", 3, 3)
         self.course1.request_enroll(self.student3, "2026-03-27")
@@ -315,11 +331,19 @@ class TestCourse(unittest.TestCase):
 
 
     def test_sort_enrolled_by_date_insertion(self):
+<<<<<<< HEAD
         
         Docstring for TestCourse.test_sort_enrolled_by_date_insertion()
             - Description: Tests that the enrolled roster is sorted by enrollment date using insertion sort.
             - Author: Jerod Abraham
         
+=======
+
+        Docstring for TestCourse.test_sort_enrolled_by_date_insertion()
+            - Description: Tests that the enrolled roster is sorted by enrollment date using insertion sort.
+            - Author: Jerod Abraham
+
+>>>>>>> 810a99955526e9f9e5fd8dcca493647ec882aa34
 
         self.course1 = Course("CSE2050", 3, 3)
         self.course1.request_enroll(self.student3, "2026-03-27")
@@ -347,9 +371,18 @@ class TestCourse(unittest.TestCase):
 
         self.course1.sort_enrolled("id", "merge")
 
+<<<<<<< HEAD
         index1 = self.course1.recursive_binary_search(self.course1.enrolled, "STU10001", 0, len(self.course1.enrolled) - 1)
         index2 = self.course1.recursive_binary_search(self.course1.enrolled, "STU10002", 0, len(self.course1.enrolled) - 1)
         index3 = self.course1.recursive_binary_search(self.course1.enrolled, "STU10003", 0, len(self.course1.enrolled) - 1)
+=======
+        index1 = self.course1.recursive_binary_search(self.course1.enrolled, "STU10001", 0,
+                                                      len(self.course1.enrolled) - 1)
+        index2 = self.course1.recursive_binary_search(self.course1.enrolled, "STU10002", 0,
+                                                      len(self.course1.enrolled) - 1)
+        index3 = self.course1.recursive_binary_search(self.course1.enrolled, "STU10003", 0,
+                                                      len(self.course1.enrolled) - 1)
+>>>>>>> 810a99955526e9f9e5fd8dcca493647ec882aa34
 
         self.assertEqual(self.course1.enrolled[index1].student.student_id, "STU10001")
         self.assertEqual(self.course1.enrolled[index2].student.student_id, "STU10002")
@@ -369,7 +402,12 @@ class TestCourse(unittest.TestCase):
 
         self.course1.sort_enrolled("id", "merge")
 
+<<<<<<< HEAD
         result = self.course1.recursive_binary_search(self.course1.enrolled, "STU99999", 0, len(self.course1.enrolled) - 1)
+=======
+        result = self.course1.recursive_binary_search(self.course1.enrolled, "STU99999", 0,
+                                                      len(self.course1.enrolled) - 1)
+>>>>>>> 810a99955526e9f9e5fd8dcca493647ec882aa34
 
         self.assertEqual(result, -1)
 
@@ -417,5 +455,9 @@ class TestCourse(unittest.TestCase):
         self.assertIn("STU10004", enrolled_ids)
         self.assertEqual(len(self.course1.waitlist), 0)
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 810a99955526e9f9e5fd8dcca493647ec882aa34
 if __name__ == "__main__":
     unittest.main()
