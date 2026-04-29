@@ -139,6 +139,7 @@ CSE-2050-Group-Project/
 ├── data_handler.py
 ├── ui.py
 └── requirements.txt
+```
 ---
 
 # Installation
@@ -152,7 +153,7 @@ git clone https://github.com/LorenzoJSDev/CSE-2050-Group-Project
 Navigate to the project directory:
 
 ```bash
-cd milestoneOne
+cd CSE-2050-Group-Project
 ```
 
 Install dependencies (if needed):
