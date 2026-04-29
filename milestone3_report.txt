@@ -1,0 +1,26 @@
+Milestone 3 Complexity Report
+
+HashMap put(key, value):
+The average-case time complexity for put is O(1).
+This is because the hash function calculates the bucket index directly, and with a good distribution of keys, each bucket should stay small.
+However, the worst-case time complexity is O(n) if many keys collide into the same bucket. When the load factor reaches 0.8, the table rehashes by doubling the number of buckets and reinserting all key-value pairs. Rehashing takes O(n), but it does not happen every time, so the average insertion time is still considered O(1) amortized.
+
+HashMap get(key):
+The average-case time complexity for get is O(1), because the hash function directly finds the bucket where the key should be located. If there are few collisions, only a small number of items need to be checked. The worst-case time complexity is O(n) if all keys end up in the same bucket due to collisions.
+
+Merge Sort:
+The time complexity of merge sort is O(n log n) in the best, average, and worst cases.
+The list is repeatedly divided in half, which gives log n levels of recursion, and each level requires O(n) work to merge the lists back together.
+Merge sort is reliable because its worst-case performance is still O(n log n).
+
+Quick Sort:
+The average-case time complexity of quick sort is O(n log n).
+This happens when the pivot divides the list into reasonably balanced parts.
+The worst-case time complexity is O(n²), which can happen if the pivot repeatedly creates very uneven partitions.
+In this project, using the middle element as the pivot helps reduce the chance of the worst case, but it does not completely remove it.
+
+Merge Sort vs. Quick Sort:
+Merge sort is better when consistent performance is important because it always runs in O(n log n).
+It is also stable when implemented carefully, meaning equal values can keep their original order.
+Quick sort is often preferred when average performance and simplicity are more important.
+It can be faster in practice because it usually has less overhead, but it has a worse worst-case time complexity than merge sort.
