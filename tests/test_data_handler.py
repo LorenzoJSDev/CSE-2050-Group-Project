@@ -4,7 +4,7 @@
 test_data_handler.py
 -------------
 
-Description: Contains test cases for the DataHandler class through Milestone 3.
+Description: Contains test cases for the DataHandler class for Milestone 3.
 
 Author: Lorenzo .S
 Contributors:
