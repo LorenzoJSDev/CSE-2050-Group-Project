@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-hashmap.py
+hash_map.py
 -------------
 
 Description: Contains the HashMap class for Milestone 3
@@ -29,7 +29,7 @@ class HashMap:
         - Author: Lorenzo .S
     """
 
-    def __init__(self, size=5):
+    def __init__(self, size=5) -> None:
         """
         Docstring for HashMap.__init__()
          - Description: Initializes the HashMap with a given size and empty buckets
@@ -38,7 +38,6 @@ class HashMap:
         self._size = size
         self._buckets = [[] for _ in range(self._size)]
         self._count = 0
-        return
 
     def _hash(self, key):
         """
@@ -92,7 +91,7 @@ class HashMap:
 
         raise KeyError(f"Key {key} not found")
 
-    def _rehash(self):
+    def _rehash(self) -> None:
         """
         Docstring for HashMap._rehash()
             - Description: Doubles the bucket size and reinserts all key-value pairs
@@ -106,7 +105,6 @@ class HashMap:
         for bucket in old_buckets:
             for key, value in bucket:
                 self.put(key, value)
-        return
     
     def keys(self):
         """
@@ -118,4 +116,20 @@ class HashMap:
         for bucket in self._buckets:
             for entry in bucket:
                 keys.append(entry[0])
-        return keys 
+        return keys
+
+    def __len__(self):
+        """
+        Docstring for HashMap.__len__()
+         - Description: Returns the number of key-value pairs stored in the HashMap.
+         - Author: Lorenzo .S
+        """
+        return self._count
+
+    def capacity(self):
+        """
+        Docstring for HashMap.capacity()
+         - Description: Returns the current number of buckets in the HashMap.
+         - Author: Lorenzo .S
+        """
+        return self._size

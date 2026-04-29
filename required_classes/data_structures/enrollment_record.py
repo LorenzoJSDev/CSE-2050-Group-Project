@@ -33,7 +33,7 @@ class EnrollmentRecord:
     def __init__(self, student: object, enroll_date=None) -> None:
         """
         Docstring for EnrollmentRecord.__init__()
-         - Description: This constructor creates the EnrollmentRecord class instance
+         - Description: This constructor creates the EnrollmentRecord class instance.
          - Author: Lorenzo .S
         """
         if enroll_date is None:
@@ -41,12 +41,11 @@ class EnrollmentRecord:
 
         self.student = student
         self.enroll_date = enroll_date
-        return
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """
         Docstring for EnrollmentRecord.__repr__()
-            - Description: This method creates a string representation of the EnrollmentRecord
-            - Author: Lorenzo .S
+         - Description: Returns a readable string representation of the EnrollmentRecord.
+         - Author: Lorenzo .S
         """
-        return f"{self.student}, {self.enroll_date}"
+        return f"EnrollmentRecord(student={self.student}, enroll_date={self.enroll_date})"

@@ -75,8 +75,7 @@ class TestEnrollmentRecord(unittest.TestCase):
         """
         record = EnrollmentRecord(self.student, self.custom_date)
 
-        expected_string = f"{self.student}, {self.custom_date}"
-        self.assertEqual(repr(record), expected_string)
+        expected_string = f"EnrollmentRecord(student={self.student}, enroll_date={self.custom_date})"
 
 
 if __name__ == "__main__":

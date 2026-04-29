@@ -37,7 +37,7 @@ class Course:
     """
 
     def __init__( self, course_code: str, course_credits: int, capacity: int = 30, students: list = None,
-    prerequisite: HashMap = None,enrolled: list = None, waitlist: list = None) -> None:
+    prerequisite: HashMap = None,enrolled: list = None, waitlist: LinkedQueue = None) -> None:
         """
         Docstring for __init__
             - Description: Initializes a Course object with a course code, number of credits, and an optional list of enrolled students after validating the input values.
@@ -71,6 +71,16 @@ class Course:
             - Author: Jerod Abraham
         """
         return len(self.enrolled)
+
+    def add_student(self, student) -> None:
+        """
+        Docstring for Course.add_student()
+            - Description: Adds a Student object to the course roster if the student is not already listed.
+            - Author: Jerod Abraham
+            - Contributor(s): Lorenzo .S
+        """
+        if student not in self.students:
+            self.students.append(student)
 
     def add_prerequisite(self, prereq_course_code: str, value=True) -> None:
         """
@@ -172,62 +182,16 @@ class Course:
 
         return self._quick_sort(less, by) + equal + self._quick_sort(greater, by)
 
-    """
-    def insertion_sort_enrolled(self, by):
-        
-        Docstring for Course.insertion_sort_enrolled()
-            - Description: Sorts the enrolled roster using insertion sort.
-            - Author: Lorenzo .S
-        
-        for i in range(1, len(self.enrolled)):
-            current_record = self.enrolled[i]
-            j = i - 1
-
-            while j >= 0 and self._get_sort_key(self.enrolled[j], by) > self._get_sort_key(current_record, by):
-                self.enrolled[j + 1] = self.enrolled[j]
-                j -= 1
-
-            self.enrolled[j + 1] = current_record
-
-    def selection_sort_enrolled(self, by):
-        
-        Docstring for Course.selection_sort_enrolled()
-            - Description: Sorts the enrolled roster using selection sort.
-            - Author: Lorenzo .S
-        
-        n = len(self.enrolled)
-
-        for i in range(n):
-            min_index = i
-
-            for j in range(i + 1, n):
-                if self._get_sort_key(self.enrolled[j], by) < self._get_sort_key(self.enrolled[min_index], by):
-                    min_index = j
-
-            self.enrolled[i], self.enrolled[min_index] = self.enrolled[min_index], self.enrolled[i]
-
-    def sort_enrolled(self, by, algorithm):
-        
-        Docstring for Course.sort_enrolled()
-            - Description: Sorts the enrolled roster by the requested key using the requested algorithm.
-            - Author: Lorenzo .S
-        
-        if algorithm == "insertion":
-            self.insertion_sort_enrolled(by)
-        elif algorithm == "selection":
-            self.selection_sort_enrolled(by)
-        else:
-            raise ValueError("Algorithm must be 'insertion' or 'selection'")
-
-        self.enrolled_sorted_by = by
-    """
     def sort_enrolled(self, by, algorithm):
         """
         Docstring for Course.sort_enrolled()
-            - Description: Sorts the enrolled roster by the requested key using the new algorithms.
+            - Description: Sorts the enrolled roster by the requested key using merge sort or quick sort.
             - Author: Lorenzo .S
             - Contributor: Jerod Abraham
         """
+        if by not in {"name", "id", "date"}:
+            raise ValueError("Sort key must be 'name', 'id', or 'date'")
+
         if algorithm == "merge":
             self.enrolled = self._merge_sort(self.enrolled, by)
         elif algorithm == "quick":

@@ -17,11 +17,10 @@ Status: Development
 # Standard library
 import unittest
 
-# Local application (your project modules)
+# Local application
 from required_classes.data_structures.linked_queue import LinkedQueue
 
 
-# ==== Classes ==== #
 class TestLinkedQueue(unittest.TestCase):
     """
     Docstring for TestLinkedQueue.
@@ -32,12 +31,10 @@ class TestLinkedQueue(unittest.TestCase):
     def setUp(self):
         """
         Docstring for TestLinkedQueue.setUp()
-            - Description: Sets up objects for testing.
+            - Description: Sets up a fresh LinkedQueue object before each test.
             - Author: Lorenzo .S
         """
         self.queue = LinkedQueue()
-
-    # ---- Test LinkedQueue.__init__() ---- #
 
     def test_init(self):
         """
@@ -47,8 +44,6 @@ class TestLinkedQueue(unittest.TestCase):
         """
         self.assertTrue(self.queue.is_empty())
         self.assertEqual(len(self.queue), 0)
-
-    # ---- Test enqueue() and __len__() ---- #
 
     def test_enqueue_and_size(self):
         """
@@ -62,8 +57,6 @@ class TestLinkedQueue(unittest.TestCase):
 
         self.assertEqual(len(self.queue), 3)
         self.assertFalse(self.queue.is_empty())
-
-    # ---- Test FIFO behavior ---- #
 
     def test_fifo_order(self):
         """
@@ -79,8 +72,6 @@ class TestLinkedQueue(unittest.TestCase):
         self.assertEqual(self.queue.dequeue(), "B")
         self.assertEqual(self.queue.dequeue(), "C")
 
-    # ---- Test dequeue on empty ---- #
-
     def test_dequeue_empty(self):
         """
         Docstring for TestLinkedQueue.test_dequeue_empty()
@@ -90,7 +81,49 @@ class TestLinkedQueue(unittest.TestCase):
         with self.assertRaises(ValueError):
             self.queue.dequeue()
 
-    # ---- Test peek() ---- #
+    def test_dequeue_reduces_size(self):
+        """
+        Docstring for TestLinkedQueue.test_dequeue_reduces_size()
+            - Description: Tests that dequeue properly reduces queue size.
+            - Author: Lorenzo .S
+        """
+        self.queue.enqueue(1)
+        self.queue.enqueue(2)
+
+        self.queue.dequeue()
+
+        self.assertEqual(len(self.queue), 1)
+
+    def test_queue_becomes_empty_after_all_dequeues(self):
+        """
+        Docstring for TestLinkedQueue.test_queue_becomes_empty_after_all_dequeues()
+            - Description: Tests that the queue reports empty after removing all items.
+            - Author: Lorenzo .S
+        """
+        self.queue.enqueue("X")
+        self.queue.enqueue("Y")
+
+        self.queue.dequeue()
+        self.queue.dequeue()
+
+        self.assertTrue(self.queue.is_empty())
+        self.assertEqual(len(self.queue), 0)
+
+    def test_mixed_enqueue_dequeue(self):
+        """
+        Docstring for TestLinkedQueue.test_mixed_enqueue_dequeue()
+            - Description: Tests queue stability during mixed enqueue and dequeue operations.
+            - Author: Lorenzo .S
+        """
+        self.queue.enqueue(1)
+        self.queue.enqueue(2)
+
+        self.assertEqual(self.queue.dequeue(), 1)
+
+        self.queue.enqueue(3)
+
+        self.assertEqual(self.queue.dequeue(), 2)
+        self.assertEqual(self.queue.dequeue(), 3)
 
     def test_peek(self):
         """

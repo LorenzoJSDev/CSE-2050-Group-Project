@@ -189,6 +189,35 @@ class TestHashMap(unittest.TestCase):
         self.assertEqual(hmap.get(key3), 30)
         self.assertEqual(hmap.get(key4), 40)
 
+    def test_keys_returns_all_keys(self):
+        """
+        Docstring for TestHashMap.test_keys_returns_all_keys()
+            - Description: Tests that keys returns all inserted keys.
+            - Author: Lorenzo .S
+        """
+        self.map.put("CSE1010", True)
+        self.map.put("CSE2050", True)
+        self.map.put("CSE3100", True)
+
+        keys = self.map.keys()
+
+        self.assertIn("CSE1010", keys)
+        self.assertIn("CSE2050", keys)
+        self.assertIn("CSE3100", keys)
+        self.assertEqual(len(keys), 3)
+
+        def test_updating_key_does_not_increase_count(self):
+            """
+            Docstring for TestHashMap.test_updating_key_does_not_increase_count()
+                - Description: Tests that updating an existing key does not create a duplicate key.
+                - Author: Lorenzo .S
+            """
+            self.map.put("CSE2050", "old")
+            self.map.put("CSE2050", "new")
+
+            self.assertEqual(self.map.get("CSE2050"), "new")
+            self.assertEqual(len(self.map.keys()), 1)
+
 
 if __name__ == "__main__":
     unittest.main()

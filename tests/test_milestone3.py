@@ -78,7 +78,7 @@ class TestMilestone3Course(unittest.TestCase):
 
         self.assertEqual(
             [r.student.name for r in self.course.enrolled],
-            ["Peter", "John", "Paul"]
+            ["John", "Paul", "Peter"]
         )
 
     def test_sort_roster_by_date_merge(self):

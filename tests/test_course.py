@@ -1,14 +1,14 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-test_course.py
+test_university.py
 -------------
 
-Description: Contains the tests cases for the Course class.
+Description: Contains the test cases for the University class.
 
 Author: Lorenzo .S
-Contributor: Jerod Abraham
-Date Created: 03-03-2026
+Contributor(s): Jerod Abraham
+Date Created: 03-04-2026
 Status: Development
 """
 
@@ -16,406 +16,297 @@ Status: Development
 
 # Standard library
 import unittest
+import datetime
 
-# Local application (your project modules)
-from required_classes.student import Student
+# Local application
+from required_classes.university import University
 from required_classes.course import Course
-from required_classes.data_structures.enrollment_record import EnrollmentRecord
+from required_classes.student import Student
 
 
-# ==== Classes ==== #
-
-class TestCourse(unittest.TestCase):
+class TestUniversity(unittest.TestCase):
+    """
+    Docstring for TestUniversity
+        - Description: Contains unit tests for the University class.
+        - Author: Lorenzo .S
+        - Contributor(s): Jerod Abraham
+    """
 
     def setUp(self):
         """
-        Docstring for TestCourse.setUp()
-            - Description: Runs before every tests, so every tests has access to created objects.
+        Docstring for TestUniversity.setUp()
+            - Description: Creates fresh test objects before each test.
             - Author: Lorenzo .S
-            - Contributor: Jerod Abraham
         """
+        self.university1 = University()
 
-        self.course1 = Course("CSE2050", 3, 2)
-        self.student1 = Student("STU10001", "Student1")
-        self.student2 = Student("STU10002", "Student2")
-        self.student3 = Student("STU10003", "Student3")
-        self.student1.courses = {}
-        self.student2.courses = {}
-        self.student3.courses = {}
+        self.student1 = Student("STU00001", "Student_1")
+        self.student2 = Student("STU00002", "Student_2")
+        self.student3 = Student("STU00003", "Student_3")
 
-    def test_init(self):
+    # ===== Test add_course =====
+
+    def test_add_course(self):
         """
-        Docstring for TestCourse.test_init()
-            - Description: Tests that the course object is initialized properly.
+        Docstring for TestUniversity.test_add_course()
+            - Description: Tests that a course is added and stored successfully.
+            - Author: Jerod Abraham
+        """
+        course1 = self.university1.add_course("CSE2050", 3, 2)
+
+        self.assertEqual(course1.course_code, "CSE2050")
+        self.assertEqual(course1.course_credits, 3)
+        self.assertEqual(course1.capacity, 2)
+        self.assertIn("CSE2050", self.university1.courses)
+
+    def test_duplicate_course(self):
+        """
+        Docstring for TestUniversity.test_duplicate_course()
+            - Description: Tests that duplicate course additions return the same object.
+            - Author: Jerod Abraham
+        """
+        c1 = self.university1.add_course("CSE2050", 3, 2)
+        c2 = self.university1.add_course("CSE2050", 3, 2)
+
+        self.assertIs(c1, c2)
+        self.assertEqual(len(self.university1.courses), 1)
+
+    # ===== Test add_student =====
+
+    def test_add_student(self):
+        """
+        Docstring for TestUniversity.test_add_student()
+            - Description: Tests that a student is added and stored successfully.
+            - Author: Jerod Abraham
+        """
+        student = self.university1.add_student("STU00001", "Student_1")
+
+        self.assertEqual(student.student_id, "STU00001")
+        self.assertEqual(student.name, "Student_1")
+        self.assertIn("STU00001", self.university1.students)
+
+    def test_duplicate_student(self):
+        """
+        Docstring for TestUniversity.test_duplicate_student()
+            - Description: Tests that duplicate student IDs return the same object.
+            - Author: Jerod Abraham
+        """
+        s1 = self.university1.add_student("STU00001", "Student_1")
+        s2 = self.university1.add_student("STU00001", "Student_2")
+
+        self.assertIs(s1, s2)
+        self.assertEqual(len(self.university1.students), 1)
+
+    def test_invalid_student_id_raises(self):
+        """
+        Docstring for TestUniversity.test_invalid_student_id_raises()
+            - Description: Tests that invalid student IDs raise ValueError.
             - Author: Lorenzo .S
-            - Contributor: Jerod Abraham
         """
+        with self.assertRaises(ValueError):
+            self.university1.add_student("BAD001", "Student_1")
 
-        self.assertEqual(self.course1.course_code, "CSE2050")
-        self.assertEqual(self.course1.course_credits, 3)
-        self.assertEqual(self.course1.capacity, 2)
-        self.assertEqual(self.course1.enrolled, [])
-        self.assertTrue(self.course1.waitlist.is_empty())
-
-    def test_add_prerequisite(self):
+    def test_empty_student_name_raises(self):
         """
-        Docstring for TestCourse.test_add_prerequisite()
-            - Description: Tests that a prerequisite course code is correctly added to the course’s prerequisite HashMap.
+        Docstring for TestUniversity.test_empty_student_name_raises()
+            - Description: Tests that empty student names raise ValueError.
+            - Author: Lorenzo .S
+        """
+        with self.assertRaises(ValueError):
+            self.university1.add_student("STU99999", "")
+
+    # ===== Test get_student =====
+
+    def test_get_student(self):
+        """
+        Docstring for TestUniversity.test_get_student()
+            - Description: Tests that a student can be retrieved by student ID.
             - Author: Jerod Abraham
         """
-        self.course1.add_prerequisite("CSE1010")
-        self.assertIn("CSE1010", self.course1.prerequisite.keys())
+        self.university1.add_student("STU00001", "Student_1")
 
-    def test_has_completed_prerequisites_true(self):
+        student = self.university1.get_student("STU00001")
+
+        self.assertEqual(student.student_id, "STU00001")
+
+    def test_get_imaginary_student(self):
         """
-        Docstring for TestCourse.test_has_completed_prerequisites_true()
-            - Description: Tests that a student who has completed all prerequisite courses with passing grades is correctly identified.
+        Docstring for TestUniversity.test_get_imaginary_student()
+            - Description: Tests that requesting a non-existent student returns None.
             - Author: Jerod Abraham
         """
-        prereq_course = Course("CSE1010", 3, 2)
-        self.student1.courses[prereq_course] = "B"
+        self.assertIsNone(self.university1.get_student("STU12028"))
 
-        self.course1.add_prerequisite("CSE1010")
+    # ===== Test get_course =====
 
-        self.assertTrue(self.course1.has_completed_prerequisites(self.student1))
-
-    def test_has_completed_prerequisites_false_missing_course(self):
+    def test_get_course(self):
         """
-        Docstring for TestCourse.test_has_completed_prerequisites_false_missing_course()
-            - Description: Tests that a student who has not completed required prerequisite courses is correctly identified.
+        Docstring for TestUniversity.test_get_course()
+            - Description: Tests that a course can be retrieved by course code.
             - Author: Jerod Abraham
         """
-        self.course1.add_prerequisite("CSE1010")
-        self.assertFalse(self.course1.has_completed_prerequisites(self.student1))
+        self.university1.add_course("CSE2050", 3, 2)
 
-    def test_has_completed_prerequisites_false_failing_grade(self):
+        course = self.university1.get_course("CSE2050")
+
+        self.assertEqual(course.course_code, "CSE2050")
+
+    def test_get_imaginary_course(self):
         """
-        Docstring for TestCourse.test_has_completed_prerequisites_false_failing_grade()
-            - Description: Tests that a student who has completed prerequisite courses with a failing grade does not satisfy requirements.
+        Docstring for TestUniversity.test_get_imaginary_course()
+            - Description: Tests that requesting a non-existent course returns None.
             - Author: Jerod Abraham
         """
-        prereq_course = Course("CSE1010", 3, 2)
-        self.student1.courses[prereq_course] = "F"
+        self.assertIsNone(self.university1.get_course("CSE2500"))
 
-        self.course1.add_prerequisite("CSE1010")
+    # ===== Test enrollment counts =====
 
-        self.assertFalse(self.course1.has_completed_prerequisites(self.student1))
-
-    def test_request_enroll_with_space(self):
+    def test_get_course_enrollment(self):
         """
-        Docstring for TestCourse.test_request_enroll_with_space()
-            - Description: Tests that a student is enrolled directly when space is available.
+        Docstring for TestUniversity.test_get_course_enrollment()
+            - Description: Tests that a course with no enrolled students returns zero.
             - Author: Jerod Abraham
         """
-        self.course1.request_enroll(self.student1, "2026-03-25")
+        self.university1.add_course("CSE2050", 3, 2)
 
-        self.assertEqual(len(self.course1.enrolled), 1)
-        self.assertIsInstance(self.course1.enrolled[0], EnrollmentRecord)
-        self.assertEqual(self.course1.enrolled[0].student, self.student1)
-        self.assertEqual(self.course1.enrolled[0].enroll_date, "2026-03-25")
+        count = self.university1.get_course_enrollment("CSE2050")
 
-    def test_request_enroll_when_full_adds_to_waitlist(self):
+        self.assertEqual(count, 0)
+
+    def test_get_students_in_course_empty(self):
         """
-        Docstring for TestCourse.test_request_enroll_when_full_adds_to_waitlist()
-            - Description: Tests that extra students are added to the waitlist when the course is full.
+        Docstring for TestUniversity.test_get_students_in_course_empty()
+            - Description: Tests that a course with no students returns an empty list.
             - Author: Jerod Abraham
         """
-        self.course1.request_enroll(self.student1, "2026-03-25")
-        self.course1.request_enroll(self.student2, "2026-03-25")
-        self.course1.request_enroll(self.student3, "2026-03-25")
+        self.university1.add_course("CSE2050", 3, 2)
 
-        self.assertEqual(len(self.course1.enrolled), 2)
-        self.assertEqual(len(self.course1.waitlist), 1)
+        self.assertEqual(self.university1.get_students_in_course("CSE2050"), [])
 
-    def test_request_enroll_without_prereqs_raises(self):
+    # ===== Test request_enroll =====
+
+    def test_request_enroll(self):
         """
-        Docstring for TestCourse.test_request_enroll_without_prereqs_raises()
-            - Description: Tests that a student who does not meet prerequisite requirements cannot enroll in the course.
-            - Author: Jerod Abraham
+        Docstring for TestUniversity.test_request_enroll()
+            - Description: Tests that a student can be enrolled through the University object.
+            - Author: Lorenzo .S
         """
-        self.course1.add_prerequisite("CSE1010")
+        self.university1.add_student("STU00001", "Student_1")
+        self.university1.add_course("CSE2050", 3, 2)
+
+        enroll_date = datetime.date(2026, 4, 8)
+
+        self.university1.request_enroll("STU00001", "CSE2050", enroll_date)
+
+        course = self.university1.get_course("CSE2050")
+
+        self.assertEqual(len(course.enrolled), 1)
+        self.assertEqual(course.enrolled[0].student.student_id, "STU00001")
+        self.assertEqual(course.enrolled[0].enroll_date, enroll_date)
+
+    def test_request_enroll_course_full_waitlist(self):
+        """
+        Docstring for TestUniversity.test_request_enroll_course_full_waitlist()
+            - Description: Tests that students are added to the waitlist when the course is full.
+            - Author: Lorenzo .S
+        """
+        self.university1.add_course("CSE2050", 3, 2)
+
+        self.university1.add_student("STU00001", "Student_1")
+        self.university1.add_student("STU00002", "Student_2")
+        self.university1.add_student("STU00003", "Student_3")
+
+        self.university1.request_enroll("STU00001", "CSE2050")
+        self.university1.request_enroll("STU00002", "CSE2050")
+        self.university1.request_enroll("STU00003", "CSE2050")
+
+        course = self.university1.get_course("CSE2050")
+
+        self.assertEqual(len(course.enrolled), 2)
+        self.assertEqual(len(course.waitlist), 1)
+
+    # ===== Test prerequisites =====
+
+    def test_request_enroll_missing_prerequisites_raises(self):
+        """
+        Docstring for TestUniversity.test_request_enroll_missing_prerequisites_raises()
+            - Description: Tests that students missing prerequisites cannot enroll.
+            - Author: Lorenzo .S
+        """
+        self.university1.add_student("STU00001", "Student_1")
+
+        prereq_course = self.university1.add_course("CSE1010", 3, 2)
+        target_course = self.university1.add_course("CSE2050", 3, 2)
+
+        target_course.add_prerequisite("CSE1010")
 
         with self.assertRaises(ValueError):
-            self.course1.request_enroll(self.student1, "2026-03-25")
+            self.university1.request_enroll("STU00001", "CSE2050")
 
-    def test_request_enroll_with_prereqs_succeeds(self):
+    def test_request_enroll_with_prerequisites_succeeds(self):
         """
-        Docstring for TestCourse.test_request_enroll_with_prereqs_succeeds()
-            - Description: Tests that a student who meets prerequisite requirements is successfully enrolled in the course.
-            - Author: Jerod Abraham
-        """
-        prereq_course = Course("CSE1010", 3, 2)
-        self.student1.courses[prereq_course] = "A"
-        self.course1.add_prerequisite("CSE1010")
-
-        self.course1.request_enroll(self.student1, "2026-03-25")
-
-        self.assertEqual(len(self.course1.enrolled), 1)
-        self.assertEqual(self.course1.enrolled[0].student, self.student1)
-
-    def test_get_student_count(self):
-        """
-        Docstring for TestCourse.test_get_student_count()
-            - Description: Tests that the get_student_count method returns the correct number of enrolled students
+        Docstring for TestUniversity.test_request_enroll_with_prerequisites_succeeds()
+            - Description: Tests that students meeting prerequisites can enroll.
             - Author: Lorenzo .S
-            - Contributor: Jerod Abraham
         """
-        self.assertEqual(self.course1.get_student_count(), 0)
+        student = self.university1.add_student("STU00001", "Student_1")
 
-        self.course1.request_enroll(self.student1, "2026-03-25")
-        self.assertEqual(self.course1.get_student_count(), 1)
+        prereq_course = self.university1.add_course("CSE1010", 3, 2)
+        target_course = self.university1.add_course("CSE2050", 3, 2)
 
-        self.course1.request_enroll(self.student2, "2026-03-25")
-        self.assertEqual(self.course1.get_student_count(), 2)
+        student.courses[prereq_course] = "A"
 
-    def test_drop_removes_student(self):
+        target_course.add_prerequisite("CSE1010")
+
+        self.university1.request_enroll("STU00001", "CSE2050")
+
+        self.assertEqual(len(target_course.enrolled), 1)
+
+    # ===== Test drop_student =====
+
+    def test_drop_student(self):
         """
-        Docstring for TestCourse.test_drop_removes_student()
-            - Description: Tests that dropping a student removes them from the enrolled roster.
-            - Author: Jerod Abraham
+        Docstring for TestUniversity.test_drop_student()
+            - Description: Tests that a student can be dropped from a course.
+            - Author: Lorenzo .S
         """
-        self.course1.request_enroll(self.student1, "2026-03-25")
-        self.course1.request_enroll(self.student2, "2026-03-25")
+        self.university1.add_student("STU00001", "Student_1")
+        self.university1.add_course("CSE2050", 3, 2)
 
-        self.course1.drop("STU10001", "2026-03-26")
+        enroll_date = datetime.date(2026, 4, 8)
 
-        self.assertEqual(len(self.course1.enrolled), 1)
-        self.assertEqual(self.course1.enrolled[0].student.student_id, "STU10002")
+        self.university1.request_enroll("STU00001", "CSE2050", enroll_date)
+        self.university1.drop_student("STU00001", "CSE2050")
 
-    def test_drop_promotes_waitlisted_student(self):
+        course = self.university1.get_course("CSE2050")
+
+        self.assertEqual(len(course.enrolled), 0)
+
+    def test_drop_student_promotes_waitlist(self):
         """
-        Docstring for TestCourse.test_drop_promotes_waitlisted_student()
+        Docstring for TestUniversity.test_drop_student_promotes_waitlist()
             - Description: Tests that dropping a student promotes the next waitlisted student.
-            - Author: Jerod Abraham
+            - Author: Lorenzo .S
         """
-        self.course1.request_enroll(self.student1, "2026-03-25")
-        self.course1.request_enroll(self.student2, "2026-03-25")
-        self.course1.request_enroll(self.student3, "2026-03-25")  # goes to waitlist
+        self.university1.add_course("CSE2050", 3, 2)
 
-        self.course1.drop("STU10001", "2026-03-26")
+        self.university1.add_student("STU00001", "Student_1")
+        self.university1.add_student("STU00002", "Student_2")
+        self.university1.add_student("STU00003", "Student_3")
 
-        self.assertEqual(len(self.course1.enrolled), 2)
-        self.assertEqual(len(self.course1.waitlist), 0)
+        self.university1.request_enroll("STU00001", "CSE2050")
+        self.university1.request_enroll("STU00002", "CSE2050")
+        self.university1.request_enroll("STU00003", "CSE2050")
 
-        enrolled_ids = [record.student.student_id for record in self.course1.enrolled]
-        self.assertIn("STU10002", enrolled_ids)
-        self.assertIn("STU10003", enrolled_ids)
+        self.university1.drop_student("STU00001", "CSE2050")
 
-    def test_request_enroll_duplicate_student_raises(self):
-        """
-        Docstring for TestCourse.test_request_enroll_duplicate_student_raises()
-            - Description: Tests that enrolling the same student twice raises an error.
-            - Author: Jerod Abraham
-        """
-        self.course1.request_enroll(self.student1, "2026-03-25")
+        course = self.university1.get_course("CSE2050")
 
-        with self.assertRaises(ValueError):
-            self.course1.request_enroll(self.student1, "2026-03-26")
+        enrolled_ids = [record.student.student_id for record in course.enrolled]
 
-    def test_sort_enrolled_by_id_merge(self):
-        """
-        Docstring for TestCourse.test_sort_enrolled_by_id_merge()
-            - Description: Tests that the enrolled roster is correctly sorted by student ID using merge sort.
-            - Author: Jerod Abraham
-        """
-        self.course1 = Course("CSE2050", 3, 3)
-        self.course1.request_enroll(self.student3, "2026-03-27")
-        self.course1.request_enroll(self.student1, "2026-03-25")
-        self.course1.request_enroll(self.student2, "2026-03-26")
+        self.assertIn("STU00003", enrolled_ids)
+        self.assertEqual(len(course.waitlist), 0)
 
-        self.course1.sort_enrolled("id", "merge")
-
-        sorted_ids = [record.student.student_id for record in self.course1.enrolled]
-        self.assertEqual(sorted_ids, ["STU10001", "STU10002", "STU10003"])
-        self.assertEqual(self.course1.enrolled_sorted_by, "id")
-
-    def test_sort_enrolled_by_name_quick(self):
-        """
-        Docstring for TestCourse.test_sort_enrolled_by_name_quick()
-            - Description: Tests that the enrolled roster is correctly sorted by student name using quick sort.
-            - Author: Jerod Abraham
-        """
-        self.course1 = Course("CSE2050", 3, 3)
-        self.course1.request_enroll(self.student3, "2026-03-27")
-        self.course1.request_enroll(self.student1, "2026-03-25")
-        self.course1.request_enroll(self.student2, "2026-03-26")
-
-        self.course1.sort_enrolled("name", "quick")
-
-        sorted_names = [record.student.name for record in self.course1.enrolled]
-        self.assertEqual(sorted_names, ["Student1", "Student2", "Student3"])
-        self.assertEqual(self.course1.enrolled_sorted_by, "name")
-
-    def test_sort_enrolled_by_date_merge(self):
-        """
-        Docstring for TestCourse.test_sort_enrolled_by_date_merge()
-            - Description: Tests that the enrolled roster is correctly sorted by enrollment date using merge sort.
-            - Author: Jerod Abraham
-        """
-        self.course1 = Course("CSE2050", 3, 3)
-        self.course1.request_enroll(self.student3, "2026-03-27")
-        self.course1.request_enroll(self.student1, "2026-03-25")
-        self.course1.request_enroll(self.student2, "2026-03-26")
-
-        self.course1.sort_enrolled("date", "merge")
-
-        sorted_dates = [record.enroll_date for record in self.course1.enrolled]
-        self.assertEqual(sorted_dates, ["2026-03-25", "2026-03-26", "2026-03-27"])
-        self.assertEqual(self.course1.enrolled_sorted_by, "date")
-
-    def test_sort_enrolled_invalid_algorithm_raises(self):
-        """
-        Docstring for TestCourse.test_sort_enrolled_invalid_algorithm_raises()
-            - Description: Tests that providing an invalid sorting algorithm raises a ValueError.
-            - Author: Jerod Abraham
-        """
-        self.course1 = Course("CSE2050", 3, 3)
-        self.course1.request_enroll(self.student1, "2026-03-25")
-
-        with self.assertRaises(ValueError):
-            self.course1.sort_enrolled("id", "insertion")
-
-    """
-    def test_sort_enrolled_by_id_insertion(self):
-        
-        Docstring for TestCourse.test_sort_enrolled_by_id_insertion()
-            - Description: Tests that the enrolled roster is sorted by student ID using insertion sort.
-            - Author: Jerod Abraham
-        
-
-        self.course1 = Course("CSE2050", 3, 3)
-        self.course1.request_enroll(self.student3, "2026-03-27")
-        self.course1.request_enroll(self.student1, "2026-03-25")
-        self.course1.request_enroll(self.student2, "2026-03-26")
-
-        self.course1.sort_enrolled("id", "insertion")
-
-        sorted_ids = [record.student.student_id for record in self.course1.enrolled]
-        self.assertEqual(sorted_ids, ["STU10001", "STU10002", "STU10003"])
-        self.assertEqual(self.course1.enrolled_sorted_by, "id")
-
-
-    def test_sort_enrolled_by_name_selection(self):
-        
-        Docstring for TestCourse.test_sort_enrolled_by_name_selection()
-            - Description: Tests that the enrolled roster is sorted by student name using selection sort.
-            - Author: Jerod Abraham
-        
-
-        self.course1 = Course("CSE2050", 3, 3)
-        self.course1.request_enroll(self.student3, "2026-03-27")
-        self.course1.request_enroll(self.student1, "2026-03-25")
-        self.course1.request_enroll(self.student2, "2026-03-26")
-
-        self.course1.sort_enrolled("name", "selection")
-
-        sorted_names = [record.student.name for record in self.course1.enrolled]
-        self.assertEqual(sorted_names, ["Student1", "Student2", "Student3"])
-        self.assertEqual(self.course1.enrolled_sorted_by, "name")
-
-
-    def test_sort_enrolled_by_date_insertion(self):
-        
-        Docstring for TestCourse.test_sort_enrolled_by_date_insertion()
-            - Description: Tests that the enrolled roster is sorted by enrollment date using insertion sort.
-            - Author: Jerod Abraham
-        
-
-        self.course1 = Course("CSE2050", 3, 3)
-        self.course1.request_enroll(self.student3, "2026-03-27")
-        self.course1.request_enroll(self.student1, "2026-03-25")
-        self.course1.request_enroll(self.student2, "2026-03-26")
-
-        self.course1.sort_enrolled("date", "insertion")
-
-        sorted_dates = [record.enroll_date for record in self.course1.enrolled]
-        self.assertEqual(sorted_dates, ["2026-03-25", "2026-03-26", "2026-03-27"])
-        self.assertEqual(self.course1.enrolled_sorted_by, "date")
-    """
-
-    def test_recursive_binary_search_finds_students(self):
-        """
-        Docstring for TestCourse.test_recursive_binary_search_finds_students()
-            - Description: Tests that recursive binary search finds the first, middle, and last student in a sorted enrolled roster.
-            - Author: Jerod Abraham
-        """
-
-        self.course1 = Course("CSE2050", 3, 3)
-        self.course1.request_enroll(self.student1, "2026-03-25")
-        self.course1.request_enroll(self.student2, "2026-03-26")
-        self.course1.request_enroll(self.student3, "2026-03-27")
-
-        self.course1.sort_enrolled("id", "merge")
-
-        index1 = self.course1.recursive_binary_search(self.course1.enrolled, "STU10001", 0, len(self.course1.enrolled) - 1)
-        index2 = self.course1.recursive_binary_search(self.course1.enrolled, "STU10002", 0, len(self.course1.enrolled) - 1)
-        index3 = self.course1.recursive_binary_search(self.course1.enrolled, "STU10003", 0, len(self.course1.enrolled) - 1)
-
-        self.assertEqual(self.course1.enrolled[index1].student.student_id, "STU10001")
-        self.assertEqual(self.course1.enrolled[index2].student.student_id, "STU10002")
-        self.assertEqual(self.course1.enrolled[index3].student.student_id, "STU10003")
-
-    def test_recursive_binary_search_not_found(self):
-        """
-        Docstring for TestCourse.test_recursive_binary_search_not_found()
-            - Description: Tests that recursive binary search returns -1 when the student ID is not found.
-            - Author: Jerod Abraham
-        """
-
-        self.course1 = Course("CSE2050", 3, 3)
-        self.course1.request_enroll(self.student1, "2026-03-25")
-        self.course1.request_enroll(self.student2, "2026-03-26")
-        self.course1.request_enroll(self.student3, "2026-03-27")
-
-        self.course1.sort_enrolled("id", "merge")
-
-        result = self.course1.recursive_binary_search(self.course1.enrolled, "STU99999", 0, len(self.course1.enrolled) - 1)
-
-        self.assertEqual(result, -1)
-
-    def test_drop_uses_binary_search(self):
-        """
-        Docstring for TestCourse.test_drop_uses_binary_search()
-            - Description: Tests that dropping a student removes the correct record after sorting by student ID.
-            - Author: Jerod Abraham
-        """
-
-        self.course1 = Course("CSE2050", 3, 3)
-        self.course1.request_enroll(self.student3, "2026-03-27")
-        self.course1.request_enroll(self.student1, "2026-03-25")
-        self.course1.request_enroll(self.student2, "2026-03-26")
-
-        self.course1.drop("STU10002", "2026-03-28")
-
-        enrolled_ids = [record.student.student_id for record in self.course1.enrolled]
-
-        self.assertNotIn("STU10002", enrolled_ids)
-        self.assertEqual(len(self.course1.enrolled), 2)
-
-    def test_drop_binary_search_promotes_waitlisted_student(self):
-        """
-        Docstring for TestCourse.test_drop_binary_search_promotes_waitlisted_student()
-            - Description: Tests that dropping a student with binary search promotes the next waitlisted student.
-            - Author: Jerod Abraham
-        """
-
-        self.course1 = Course("CSE2050", 3, 3)
-        student4 = Student("STU10004", "Student4")
-
-        self.course1.request_enroll(self.student3, "2026-03-27")
-        self.course1.request_enroll(self.student1, "2026-03-25")
-        self.course1.request_enroll(self.student2, "2026-03-26")
-        self.course1.request_enroll(student4, "2026-03-28")
-
-        self.assertEqual(len(self.course1.waitlist), 1)
-
-        self.course1.drop("STU10002", "2026-03-29")
-
-        enrolled_ids = [record.student.student_id for record in self.course1.enrolled]
-
-        self.assertNotIn("STU10002", enrolled_ids)
-        self.assertIn("STU10004", enrolled_ids)
-        self.assertEqual(len(self.course1.waitlist), 0)
 
 if __name__ == "__main__":
     unittest.main()

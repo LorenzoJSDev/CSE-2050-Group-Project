@@ -1,7 +1,7 @@
 # CSE 2050 – Group Project 
-### University Course Management System
+### University Course Management System (Milestones 1–3)
 
-**Author(s):** Lorenzo Julian Serrano and Jerod Abraham
+**Author(s):** Lorenzo Julian Serrano and Jerod Abraham  
 **Course:** CSE 2050 – Object-Oriented Programming & Data Structures  
 **Institution:** University of Connecticut  
 
@@ -9,120 +9,136 @@
 
 # Project Overview
 
-This project implements a simple **University Course Management System** using object-oriented programming principles in Python.
+This project implements a comprehensive **University Course Management System** using object-oriented programming principles and custom data structures in Python.
 
-The system models relationships between **students and courses**, allowing operations such as:
+The system models relationships between **students, courses, enrollment records, prerequisites, and university operations**, allowing advanced academic management across all three project milestones.
+
+### Core system operations include:
 
 - Enrolling students in courses
+- Managing course capacities
+- Maintaining waitlists
 - Recording grades
 - Calculating GPA
 - Querying course rosters
-- Performing statistical analysis on course grades
+- Sorting rosters
+- Binary searching student records
+- Managing prerequisite validation
+- Performing statistical analysis
+- Loading multiple CSV datasets
+- Providing a full Streamlit-based interface
 
-The goal of this project is to demonstrate **modular design, object-oriented programming, and data management in Python**.
+The goal of this project is to demonstrate:
+
+- Modular software design
+- Object-oriented programming
+- Custom data structures
+- Algorithm implementation
+- Data management in Python
 
 ---
 
 # Features
 
 ### Student Management
-- Create student objects
+- Create and validate student objects
 - Enroll students in courses
+- Prevent duplicate enrollments
 - Store grades
+- Update grades
 - Calculate GPA
+- Retrieve complete academic history
 
 ### Course Management
 - Create course objects
-- Maintain course rosters
-- Associate students with courses
+- Store course credits and capacities
+- Maintain enrolled rosters
+- Maintain waitlists
+- Add/drop students
+- Promote waitlisted students automatically
+- Sort rosters by:
+  - Name
+  - Student ID
+  - Enrollment date
+- Support:
+  - Merge Sort
+  - Quick Sort
+- Perform recursive binary search
+
+### Prerequisite Management (Milestone 3)
+- Store prerequisites using custom HashMap
+- Validate student eligibility
+- Prevent invalid enrollments
+- Query prerequisites
+- Query student eligibility
 
 ### Data Queries
 - List students enrolled in a course
+- View course waitlists
+- View course enrollment capacity
+- View course prerequisites
+- Check student prerequisite eligibility
 - Retrieve course information for a student
-- Compute statistics such as:
+- Retrieve GPA
+- Compute:
   - Mean
   - Median
   - Mode
+- Compute university-wide GPA mean and median
+- View common students between courses
 
 ### Data Handling
-- Load student and course data from CSV files
+- Load:
+  - University student data
+  - Course catalog
+  - Enrollment requests
+  - Prerequisite data
+- Parse malformed or nonstandard CSV formatting
 - Manage operations through a centralized **DataHandler** class
+
+### User Interface
+- Streamlit-based web interface
+- Upload CSV files
+- Interactive query tools
+- Full academic management dashboard
 
 ---
 
 # Project Structure
 
-```
-milestoneOne/
+```bash
+CSE-2050-Group-Project/
 │
 ├── required_classes/
 │   ├── student.py
 │   ├── course.py
 │   ├── university.py
+│   │
+│   └── data_structures/
+│       ├── linked_queue.py
+│       ├── hash_map.py
+│       └── enrollment_record.py
 │
 ├── tests/
 │   ├── test_student.py
 │   ├── test_course.py
 │   ├── test_university.py
-│   └── test_data_handler.py
+│   ├── test_data_handler.py
+│   ├── test_linked_queue.py
+│   ├── test_hash_map.py
+│   ├── test_enrollment_record.py
+│   └── test_milestone3.py
 │
 ├── csv_files/
-│   └── course_catalog(in).csv
-|   └── university_data(in).csv
+│   ├── milestone3_university_data.csv
+│   ├── milestone3_course_catalog_CSE10_with_capacity.csv
+│   ├── milestone_3_enrollments_CSE10.csv
+│   └── milestone3_cse_prerequisites.csv
 │
-└── README.md
-└── data_handler.py
-└── ui.py (this will be run with streamlit)
-└── requirement.txt
-
-```
-
----
-
-# Class Overview
-
-## Student
-
-Represents an individual student.
-
-Responsibilities:
-- Store student ID and name
-- Track enrolled courses
-- Store grades
-- Compute GPA
-
----
-
-## Course
-
-Represents a university course.
-
-Responsibilities:
-- Store course code
-- Maintain a roster of enrolled students
-- Add or remove students
-
----
-
-## University
-
-Represents the overall academic system.
-
-Responsibilities:
-- Maintain collections of students and courses
-- Coordinate interactions between students and courses
-
----
-
-## DataHandler
-
-Handles external data operations.
-
-Responsibilities:
-- Load data from CSV files
-- Query enrolled students
-- Compute course statistics
-
+├── README.md
+├── data_handler.py
+├── ui.py
+└── requirements.txt
 ---
 
 # Installation
@@ -130,7 +146,7 @@ Responsibilities:
 Clone the repository:
 
 ```bash
-git clone https://github.com/LorenzoJSDev/CSE-2050-Milestone-One
+git clone https://github.com/LorenzoJSDev/CSE-2050-Group-Project
 ```
 
 Navigate to the project directory:

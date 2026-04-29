@@ -51,6 +51,13 @@ class Student:
             - Description: The constructor for Student class instances / objects
             - Author: Lorenzo .S
         """
+
+        if not isinstance(student_id, str) or len(student_id) != 8 or not student_id.startswith("STU"):
+            raise ValueError("student_id must be an 8-character string starting with 'STU'")
+
+        if not isinstance(name, str) or not name.strip():
+            raise ValueError("name must be a non-empty string")
+
         self.student_id = student_id
         self.name = name
         self.courses = {} if courses is None else courses
@@ -58,10 +65,11 @@ class Student:
     def __str__(self):
         """
         Docstring for Student.__str__() method
-            - Description: TBD
+            - Description: Returns a readable string representation of the Student object.
             - Contributor(s): Lorenzo .J Serrano
         """
-        return f"{self.student_id},{self.name}.{self.courses}"
+        return f"{self.student_id}, {self.name}, {self.courses}"
+
 
     def enroll(self, course: object, grade: str):
         """
@@ -127,7 +135,7 @@ class Student:
             - Description: Returns a list of courses a student is enrolled in.
             - Author: Lorenzo .S
         """
-        return self.courses.keys()
+        return list(self.courses.keys())
 
 
     def get_course_info(self):
@@ -144,5 +152,4 @@ class Student:
                 "grade": self.courses[course],
                 "credits": course.course_credits
             })
-
         return courses_info

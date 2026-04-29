@@ -36,15 +36,16 @@ class DataHandler:
         - Author: Lorenzo .S
     """
 
-    def __init__(self, university_data_file, course_catalog_file, enrollment_file) -> None:
+    def __init__(self, university_data_file, course_catalog_file, enrollment_file, prerequisite_file=None) -> None:
         """
         Docstring for DataHandler.__init__()
-            - Description: TBD
+            - Description: Initializes the DataHandler with file objects and creates a University object.
             - Author: Lorenzo .S
         """
         self.university_data_file = university_data_file
         self.course_catalog_file = course_catalog_file
         self.enrollment_file = enrollment_file
+        self.prerequisite_file = prerequisite_file
         self.university_obj = University()
 
     # ---- Data Loaders ---- #
@@ -107,7 +108,7 @@ class DataHandler:
     def load_enrollment_data(self) -> None:
         """
         Docstring for DataHandler.load_enrollment_data()
-            - Description: Loads the active enrollment request data into the university object.
+            - Description: Loads active enrollment request data into the university object while skipping invalid prerequisite enrollments.
             - Author: Lorenzo .S
         """
         csv_reader = csv.DictReader(self.enrollment_file)
@@ -126,8 +127,40 @@ class DataHandler:
             course = self.university_obj.get_course(course_id)
 
             enroll_date = datetime.date.today()
-            course.request_enroll(student, enroll_date)
-        return
+
+            try:
+                course.request_enroll(student, enroll_date)
+            except ValueError:
+                continue
+
+    def load_prerequisite_data(self) -> None:
+        """
+        Docstring for DataHandler.load_prerequisite_data()
+            - Description: Loads prerequisite data into each Course object's HashMap.
+            - Author: Lorenzo .S
+        """
+        if self.prerequisite_file is None:
+            return
+
+        self.prerequisite_file.seek(0)
+
+        for line in self.prerequisite_file:
+            line = line.strip().replace('"', "")
+
+            if not line or line.lower().startswith("course_id"):
+                continue
+
+            parts = line.split()
+
+            if len(parts) < 2:
+                continue
+
+            course_id = parts[0].strip()
+            prerequisite = parts[1].strip()
+
+            if course_id in self.university_obj.courses:
+                course = self.university_obj.get_course(course_id)
+                course.add_prerequisite(prerequisite)
 
     # ---- Data Query Methods ---- #
 
@@ -260,3 +293,111 @@ class DataHandler:
             return pd.DataFrame(rows)
 
         return f"There are no common students in {course_code1} and {course_code2}"
+
+    def query_waitlist_for_course(self, course_code):
+        """
+        Docstring for DataHandler.query_waitlist_for_course()
+            - Description: Returns the students currently waiting for a given course.
+            - Author: Lorenzo .S
+        """
+        course_code = course_code.strip()
+
+        if course_code not in self.university_obj.courses:
+            return f"{course_code} is not a registered course."
+
+        course = self.university_obj.get_course(course_code)
+
+        rows = []
+        current = course.waitlist.front
+
+        while current is not None:
+            student = current.data
+            rows.append({
+                "student_id": student.student_id,
+                "student_name": student.name
+            })
+            current = current.next
+
+        if not rows:
+            return f"There are currently no students on the waitlist for {course_code}."
+
+        return pd.DataFrame(rows)
+
+    def query_course_enrollment_status(self, course_code):
+        """
+        Docstring for DataHandler.query_course_enrollment_status()
+            - Description: Returns enrollment count, capacity, available seats, and waitlist size for a course.
+            - Author: Lorenzo .S
+        """
+        course_code = course_code.strip()
+
+        if course_code not in self.university_obj.courses:
+            return f"{course_code} is not a registered course."
+
+        course = self.university_obj.get_course(course_code)
+
+        rows = [{
+            "course_code": course.course_code,
+            "enrolled_count": len(course.enrolled),
+            "capacity": course.capacity,
+            "available_seats": course.capacity - len(course.enrolled),
+            "waitlist_count": len(course.waitlist)
+        }]
+
+        return pd.DataFrame(rows)
+
+    def query_prerequisites_for_course(self, course_code):
+        """
+        Docstring for DataHandler.query_prerequisites_for_course()
+            - Description: Returns the prerequisite course codes for a given course.
+            - Author: Lorenzo .S
+        """
+        course_code = course_code.strip()
+
+        if course_code not in self.university_obj.courses:
+            return f"{course_code} is not a registered course."
+
+        course = self.university_obj.get_course(course_code)
+        prerequisite_codes = course.prerequisite.keys()
+
+        if not prerequisite_codes:
+            return f"{course_code} does not have any listed prerequisites."
+
+        rows = []
+
+        for prerequisite in prerequisite_codes:
+            rows.append({
+                "course_code": course_code,
+                "prerequisite": prerequisite
+            })
+
+        return pd.DataFrame(rows)
+
+    def query_student_prerequisite_eligibility(self, student_id, course_code):
+        """
+        Docstring for DataHandler.query_student_prerequisite_eligibility()
+            - Description: Checks whether a student has completed the prerequisites for a course.
+            - Author: Lorenzo .S
+        """
+        student_id = student_id.strip()
+        course_code = course_code.strip()
+
+        if student_id not in self.university_obj.students:
+            return f"{student_id} is not a registered student."
+
+        if course_code not in self.university_obj.courses:
+            return f"{course_code} is not a registered course."
+
+        student = self.university_obj.get_student(student_id)
+        course = self.university_obj.get_course(course_code)
+
+        is_eligible = course.has_completed_prerequisites(student)
+
+        rows = [{
+            "student_id": student_id,
+            "student_name": student.name,
+            "course_code": course_code,
+            "eligible": is_eligible
+        }]
+
+        return pd.DataFrame(rows)
