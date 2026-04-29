@@ -26,7 +26,7 @@ TO DO:
 # Third-party
 
 
-# Local application (your project modules)
+# Local application
 
 
 # ===== Classes =====

@@ -21,7 +21,7 @@ import datetime
 # Third-party
 
 
-# Local application (your project modules)
+# Local application
 from required_classes.data_structures.linked_queue import LinkedQueue
 from required_classes.data_structures.enrollment_record import EnrollmentRecord
 from required_classes.data_structures.hash_map import HashMap

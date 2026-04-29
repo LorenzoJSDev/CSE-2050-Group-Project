@@ -17,7 +17,7 @@ Status: Development
 # Standard library
 import unittest
 
-# Local application (your project modules)
+# Local application
 from required_classes.student import Student
 from required_classes.course import Course
 from required_classes.data_structures.linked_queue import LinkedQueue

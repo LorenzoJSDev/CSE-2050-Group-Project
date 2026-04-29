@@ -20,7 +20,7 @@ import datetime
 # Third-party
 
 
-# Local application (your project modules)
+# Local application
 
 
 class EnrollmentRecord:

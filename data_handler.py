@@ -23,7 +23,7 @@ import datetime
 # Third-party
 import pandas as pd
 
-# Local application (your project modules)
+# Local application
 from required_classes.university import University
 
 

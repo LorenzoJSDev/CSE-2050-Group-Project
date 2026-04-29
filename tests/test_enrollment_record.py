@@ -18,7 +18,7 @@ Status: Development
 import unittest
 import datetime
 
-# Local application (your project modules)
+# Local application
 from required_classes.data_structures.enrollment_record import EnrollmentRecord
 from required_classes.student import Student
 
